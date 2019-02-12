@@ -60,16 +60,16 @@ function Visualisation() {
         gMag.init(selectors);
     }
 
-    function processNewData(data) {
+    this.processNewData = function(data) {
         var acc, gyro, mag, time, point;
 
         for (var i = 0; i < data.length; i++) {
             point = data[i];
-            time = point.timestamp;
+            time = new Date().getTime();
 
-            acc = getDataPoint(time, point.accX, point.accY, point.accZ);
-            gyro = getDataPoint(time, point.gyroX, point.gyroY, point.gyroZ);
-            mag = getDataPoint(time, point.magX, point.magY, point.magZ);
+            acc = getDataPoint(time, parseInt(point.accX), parseInt(point.accY), parseInt(point.accZ));
+            gyro = getDataPoint(time, parseInt(point.gyroX), parseInt(point.gyroY), parseInt(point.gyroZ));
+            mag = getDataPoint(time, parseInt(point.magX), parseInt(point.magY), parseInt(point.magZ));
 
             if(accQueue.push(acc) === queueSize)
                 accQueue.shift();
@@ -83,7 +83,7 @@ function Visualisation() {
 
         redrawAxes(accQueue[0].timestamp, accQueue[accQueue.length - 1].timestamp);
         redrawLines();
-    }
+    };
 
     function getDataPoint(time, x, y, z) {
         return { timestamp: time, x: x, y: y, z: z};
@@ -109,9 +109,6 @@ function Visualisation() {
     };
 
 }
-
-var visualisation = new Visualisation();
-visualisation.init();
 
 
 

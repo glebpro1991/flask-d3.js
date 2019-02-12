@@ -25,4 +25,15 @@
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="graph.js"></script>
 <script src="visualisation.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
+<script>
+    var visualisation = new Visualisation();
+    visualisation.init();
+    var socket = io.connect('http://localhost:8081'); // connect to server
+    socket.on('news', function (data) { // listen to news event raised by the server
+        console.log(data);
+        visualisation.processNewData(data);
+        socket.emit('my other event', { my: 'data' }); // raise an event on the server
+    });
+</script>
 </html>
