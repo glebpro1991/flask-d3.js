@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sensor Data Visualisation</title>
+    <link rel="stylesheet" href="style.css" type="text/css">
+</head>
+<body>
+    <div class="container">
+        <div class="item acc">
+            <h4>Accelerometer</h4>
+            <svg id="acc"></svg>
+        </div>
+
+        <div class="item gyro">
+            <h4>Gyroscope</h4>
+            <svg id="gyro"></svg>
+        </div>
+
+        <div class="item mag">
+            <h4>Magnetometer</h4>
+            <svg id="mag"></svg>
+        </div>
+    </div>
+</body>
+<script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="graph.js"></script>
+<script src="visualisation.js"></script>
+</html>

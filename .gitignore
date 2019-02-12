@@ -1,0 +1,15 @@
+.idea
+/idea
+*.iml
+*.xml
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+.env
+.venv
+env/
+venv/
+
+static/node_modules
