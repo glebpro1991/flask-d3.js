@@ -35,7 +35,7 @@ def save():
 @app.route('/get', methods=['GET'])
 def get():
     qryresult = db.session.query(SensorDataModel)
-    return jsonify([i.serialize for i in qryresult.all()])
+    return jsonify([i.serialize for i in qryresult.limit(100).all()])
 
 
 def saveData(data):
