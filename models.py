@@ -1,6 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
 import datetime
-from alembic import op
+
+from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
@@ -21,6 +21,22 @@ class BaseModel(db.Model):
         return {
             column: value if not isinstance(value, datetime.date) else value.strftime('%Y-%m-%d')
             for column, value in self._to_dict().items()
+        }
+
+    @property
+    def serialize(self):
+        return {
+            'sampleId': self.sampleId,
+            'time': self.time,
+            'accX': self.accX,
+            'accY': self.accY,
+            'accZ': self.accZ,
+            'gyroX': self.gyroX,
+            'gyroY': self.gyroY,
+            'gyroZ': self.gyroZ,
+            'magX': self.magX,
+            'magY': self.magY,
+            'magZ': self.magZ
         }
 
 

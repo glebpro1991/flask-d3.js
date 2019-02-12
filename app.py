@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify
 from models import db, SensorDataModel
-import time
 
 app = Flask(__name__)
 
@@ -31,6 +30,12 @@ def save():
     req_data = request.get_json()
     message = saveData(req_data)
     return jsonify([{"response": message}])
+
+
+@app.route('/get', methods=['GET'])
+def get():
+    qryresult = db.session.query(SensorDataModel)
+    return jsonify([i.serialize for i in qryresult.all()])
 
 
 def saveData(data):
