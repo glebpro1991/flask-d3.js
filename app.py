@@ -1,13 +1,15 @@
-from flask import Flask, request, jsonify
+import datetime
+from flask import Flask, request, jsonify, Response, send_file
+import json, os
+
 from models import db, SensorDataModel
 
 app = Flask(__name__)
 
-# Local
 POSTGRES = {
     'user': 'gleb',
     'pw': 'primary1',
-    'db': 'sensordata',
+    'db': 'sensordata1',
     'host': 'localhost',
     'port': '5432',
 }
@@ -33,7 +35,10 @@ def save():
 @app.route('/getAll', methods=['GET'])
 def getAll():
     resultset = db.session.query(SensorDataModel).all()
-    return jsonify([i.serialize for i in resultset])
+    with open(os.path.join('/tmp', 'result.json'), 'w') as fp:
+        j = json.dumps([i.serialize for i in resultset], default=converter, indent=4)
+        fp.write(j)
+    return send_file('/tmp/result.json', as_attachment=True)
 
 
 @app.route('/getLastBatch', methods=['GET'])
@@ -57,6 +62,11 @@ def saveData(data):
         return str(e)
     finally:
         db.session.close()
+
+
+def converter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
 
 
 if __name__ == '__main__':
