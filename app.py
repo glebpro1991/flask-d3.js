@@ -32,10 +32,11 @@ def save():
     return jsonify([{"response": message}])
 
 
-@app.route('/getAll', methods=['GET'])
-def getAll():
+@app.route('/download', methods=['GET'])
+def download():
     resultset = db.session.query(SensorDataModel).all()
-    with open(os.path.join('/tmp', 'result.json'), 'w') as fp:
+    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
+    with open(os.path.join(filedir, 'result.json'), 'w') as fp:
         j = json.dumps([i.serialize for i in resultset], default=converter, indent=4)
         fp.write(j)
     response = make_response()
@@ -43,9 +44,10 @@ def getAll():
     response.headers['Cache-Control'] = 'no-cache'
     response.headers['Content-Type'] = 'application/octet-stream'
     response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
-    response.headers['Content-Length'] = os.path.getsize('/tmp/result.json')
-    response.headers['X-Accel-Redirect'] = '/tmp/result.json'  # nginx: http://wiki.nginx.org/NginxXSendfile
-    return response
+    response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
+    response.headers['X-Accel-Redirect'] = '/download/result.json'
+    # return send_file('/tmp/result.json', as_attachment=True);
+    return response;
 
 
 @app.route('/getLastBatch', methods=['GET'])
