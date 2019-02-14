@@ -9,7 +9,7 @@ app = Flask(__name__)
 POSTGRES = {
     'user': 'gleb',
     'pw': 'primary1',
-    'db': 'sensordata1',
+    'db': 'sensordata',
     'host': 'localhost',
     'port': '5432',
 }
