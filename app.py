@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, request, jsonify, Response, send_file
+from flask import Flask, request, jsonify, Response, send_file, make_response
 import json, os
 
 from models import db, SensorDataModel
@@ -38,7 +38,14 @@ def getAll():
     with open(os.path.join('/tmp', 'result.json'), 'w') as fp:
         j = json.dumps([i.serialize for i in resultset], default=converter, indent=4)
         fp.write(j)
-    return send_file('/tmp/result.json', as_attachment=True)
+    response = make_response()
+    response.headers['Content-Description'] = 'File Transfer'
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Content-Type'] = 'application/octet-stream'
+    response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
+    response.headers['Content-Length'] = os.path.getsize('/tmp/result.json')
+    response.headers['X-Accel-Redirect'] = '/tmp/result.json'  # nginx: http://wiki.nginx.org/NginxXSendfile
+    return response
 
 
 @app.route('/getLastBatch', methods=['GET'])
