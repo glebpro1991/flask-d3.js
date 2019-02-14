@@ -18,13 +18,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
 db.init_app(app)
 
 
-# Home page just prints the message
 @app.route('/', methods=['GET'])
 def home():
     return 'Successfully deployed!'
 
 
-# Save endpoint
 @app.route('/save', methods=['POST'])
 def save():
     req_data = request.get_json()
@@ -32,10 +30,16 @@ def save():
     return jsonify([{"response": message}])
 
 
-@app.route('/get', methods=['GET'])
-def get():
-    qryresult = db.session.query(SensorDataModel)
-    return jsonify([i.serialize for i in qryresult.order_by(SensorDataModel.sampleId.desc()).limit(100).all()])
+@app.route('/getAll', methods=['GET'])
+def getAll():
+    resultset = db.session.query(SensorDataModel).all()
+    return jsonify([i.serialize for i in resultset])
+
+
+@app.route('/getLastBatch', methods=['GET'])
+def getLastBatch():
+    resultset = db.session.query(SensorDataModel)
+    return jsonify([i.serialize for i in resultset.order_by(SensorDataModel.sampleId.desc()).limit(100).all()])
 
 
 def saveData(data):
