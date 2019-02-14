@@ -29,9 +29,9 @@
 <script>
     var visualisation = new Visualisation();
     visualisation.init();
-    var socket = io.connect('http://localhost:8081'); // connect to server
-    socket.on('news', function (data) { // listen to news event raised by the server
-        console.log(data);
+    var socket = io.connect();
+    console.log(socket);
+    socket.on('news', function (data) {
         visualisation.processNewData(data);
         socket.emit('my other event', { my: 'data' }); // raise an event on the server
     });

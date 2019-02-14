@@ -65,7 +65,7 @@ function Visualisation() {
 
         for (var i = 0; i < data.length; i++) {
             point = data[i];
-            time = new Date().getTime();
+            time = Date.parse(point.time);
 
             acc = getDataPoint(time, parseInt(point.accX), parseInt(point.accY), parseInt(point.accZ));
             gyro = getDataPoint(time, parseInt(point.gyroX), parseInt(point.gyroY), parseInt(point.gyroZ));

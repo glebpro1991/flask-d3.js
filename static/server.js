@@ -25,13 +25,20 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
         }
 
         io.sockets.on('connection', function (socket) {
+	    console.log('Connection successful!');
             clientSocket = socket;
         });
 
+	// var http = require('http');
+
+	// http.createServer(function (req, res) {
+    		// res.writeHead(200, {'Content-Type': 'text/plain'});
+    		// res.end('Hello World\n');
+	// }).listen(3000, "127.0.0.1");
+	// console.log('Server running at http://127.0.0.1:8081/');
+
         client.on('notification', function(msg) {
             if (msg.name === 'notification' && msg.channel === 'table_update') {
-                console.log(msg.payload);
-                console.log(jsonArr.length);
                 jsonArr.push(JSON.parse(msg.payload));
                 if(jsonArr.length === 100) {
                     send(jsonArr);
