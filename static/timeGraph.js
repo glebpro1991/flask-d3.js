@@ -1,10 +1,10 @@
 
-function Graph() {
-    var graph, xScale, yScale,
+function TimeGraph() {
+    let graph, xScale, yScale,
         xAxis, yAxis,
         lineX, lineY, lineZ;
 
-    var graphDim = {
+    const graphDim = {
         margins: {
             top: 20,
             right: 20,
@@ -15,17 +15,19 @@ function Graph() {
         height: 200
     };
 
-    this.init = function(selectors) {
-        this.selectors = selectors;
-        initGraph(selectors.graph);
+    let selectors;
+
+    this.init = function(sel) {
+        selectors = sel;
+        initGraph();
         initAxes();
-        appendAxes(selectors.axes);
+        appendAxes();
         initLineFunctions();
-        initLines(selectors.lines);
+        initLines();
     };
 
-    function initGraph(selector) {
-        graph = d3.select(selector)
+    function initGraph() {
+        graph = d3.select(selectors.graph)
             .attr('width', graphDim.width
                 + graphDim.margins.left
                 + graphDim.margins.right)
@@ -69,10 +71,10 @@ function Graph() {
             .ticks(5);
     }
 
-    function initLines(selectors) {
-        initLine(selectors.x, 'red');
-        initLine(selectors.y, 'blue');
-        initLine(selectors.z, 'green');
+    function initLines() {
+        initLine(selectors.lines.x, 'red');
+        initLine(selectors.lines.y, 'blue');
+        initLine(selectors.lines.z, 'green');
     }
 
     function initLine(className, color) {
@@ -83,25 +85,25 @@ function Graph() {
             .attr('fill', 'none');
     }
 
-    function appendAxes(selectors) {
+    function appendAxes() {
         graph.append("svg:g")
-            .attr('class', selectors.x)
+            .attr('class', selectors.axes.x)
             .attr("transform", "translate(0," + (graphDim.height - graphDim.margins.bottom) + ")")
             .call(xAxis);
         graph.append("svg:g")
-            .attr('class', selectors.y)
+            .attr('class', selectors.axes.y)
             .attr("transform", "translate(" + (graphDim.margins.left) + ",0)")
             .call(yAxis);
     }
 
     this.redrawLines = function(queue) {
-        graph.select(getD3Selector(this.selectors.lines.x))
+        graph.select(getD3Selector(selectors.lines.x))
             .attr('d', lineX(queue));
 
-        graph.select(getD3Selector(this.selectors.lines.y))
+        graph.select(getD3Selector(selectors.lines.y))
             .attr('d', lineY(queue));
 
-        graph.select(getD3Selector(this.selectors.lines.z))
+        graph.select(getD3Selector(selectors.lines.z))
             .attr('d', lineZ(queue));
     };
 
@@ -115,10 +117,10 @@ function Graph() {
             .scale(yScale)
             .ticks(5);
 
-        graph.selectAll(getD3Selector(this.selectors.axes.x))
+        graph.selectAll(getD3Selector(selectors.axes.x))
             .call(xAxis);
 
-        graph.selectAll(getD3Selector(this.selectors.axes.y))
+        graph.selectAll(getD3Selector(selectors.axes.y))
             .call(yAxis);
     };
 

@@ -6,34 +6,52 @@
 </head>
 <body>
     <div class="container">
-        <div class="item acc">
-            <h4>Accelerometer</h4>
-            <svg id="acc"></svg>
+        <div class="item accTime">
+            <h4>Accelerometer Time Domain</h4>
+            <svg id="accTime"></svg>
         </div>
 
-        <div class="item gyro">
-            <h4>Gyroscope</h4>
-            <svg id="gyro"></svg>
+        <div class="item gyroTime">
+            <h4>Gyroscope Time Domain</h4>
+            <svg id="gyroTime"></svg>
         </div>
 
-        <div class="item mag">
-            <h4>Magnetometer</h4>
-            <svg id="mag"></svg>
+        <div class="item magTime">
+            <h4>Magnetometer Time Domain</h4>
+            <svg id="magTime"></svg>
+        </div>
+
+        <div class="item accFreq">
+            <h4>Accelerometer Frequency Domain</h4>
+            <svg id="accFreq"></svg>
+        </div>
+
+        <div class="item gyroFreq">
+            <h4>Gyroscope Frequency Domain</h4>
+            <svg id="gyroFreq"></svg>
+        </div>
+
+        <div class="item magFreq">
+            <h4>Magnetometer Frequency Domain</h4>
+            <svg id="magFreq"></svg>
         </div>
     </div>
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>
-<script src="graph.js"></script>
+<script src="timeGraph.js"></script>
+<script src="frequencyGraph.js"></script>
 <script src="visualisation.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
 <script>
-    var visualisation = new Visualisation();
+    const visualisation = new Visualisation();
     visualisation.init();
+    // visualisation.loadJSON(visualisation.processDataSet); // Testing
+
     var socket = io.connect();
     console.log(socket);
     socket.on('news', function (data) {
         visualisation.processNewData(data);
-        socket.emit('my other event', { my: 'data' }); // raise an event on the server
+        socket.emit('my other event', { my: 'data' });
     });
 </script>
 </html>

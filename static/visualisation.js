@@ -1,7 +1,8 @@
 
 function Visualisation() {
-    var accQueue = [], gyroQueue = [], magQueue = [],
-        gAcc, gGyro, gMag,
+    let accQueue = [], gyroQueue = [], magQueue = [],
+        gAccTime, gGyroTime, gMagTime,
+        gAccFreq, gGyroFreq, gMagFreq,
         queueSize = 5000,
         gAccYDomain = 50,
         gGyroYDomain = 25,
@@ -12,14 +13,14 @@ function Visualisation() {
     };
 
     function createGraphs() {
-        var selectors;
+        let selectors;
 
-        gAcc = new Graph();
+        gAccTime = new TimeGraph();
         selectors = {
-            graph: '#acc',
+            graph: '#accTime',
             axes: {
-                x: ' acc x axis',
-                y: ' acc y axis'
+                x: ' acc x time axis',
+                y: ' acc y time axis'
             },
             lines: {
                 x:' accX line',
@@ -27,14 +28,14 @@ function Visualisation() {
                 z:' accZ line'
             }
         };
-        gAcc.init(selectors);
+        gAccTime.init(selectors);
 
-        gGyro = new Graph();
+        gGyroTime = new TimeGraph();
         selectors = {
-            graph: '#gyro',
+            graph: '#gyroTime',
             axes: {
-                x: ' gyro x axis',
-                y: ' gyro y axis'
+                x: ' gyro x time axis',
+                y: ' gyro y time axis'
             },
             lines: {
                 x:' gyroX line',
@@ -42,14 +43,14 @@ function Visualisation() {
                 z:' gyroZ line'
             }
         };
-        gGyro.init(selectors);
+        gGyroTime.init(selectors);
 
-        gMag = new Graph();
+        gMagTime = new TimeGraph();
         selectors = {
-            graph: '#mag',
+            graph: '#magTime',
             axes: {
-                x: ' mag x axis',
-                y: ' mag y axis'
+                x: ' mag x time axis',
+                y: ' mag y time axis'
             },
             lines: {
                 x:' magX line',
@@ -57,13 +58,43 @@ function Visualisation() {
                 z:' magZ line'
             }
         };
-        gMag.init(selectors);
+        gMagTime.init(selectors);
+
+        gAccFreq = new FrequencyGraph();
+        selectors = {
+            graph: '#accFreq',
+            axes: {
+                x: ' acc x freq axis',
+                y: ' acc y freq axis'
+            }
+        };
+        gAccFreq.init(selectors);
+
+        gGyroFreq = new FrequencyGraph();
+        selectors = {
+            graph: '#gyroFreq',
+            axes: {
+                x: ' gyro x freq axis',
+                y: ' gyro y freq axis'
+            }
+        };
+        gGyroFreq.init(selectors);
+
+        gMagFreq = new FrequencyGraph();
+        selectors = {
+            graph: '#magFreq',
+            axes: {
+                x: ' mag x freq axis',
+                y: ' mag y freq axis'
+            }
+        };
+        gMagFreq.init(selectors);
     }
 
     this.processNewData = function(data) {
-        var acc, gyro, mag, time, point;
+        let acc, gyro, mag, time, point;
 
-        for (var i = 0; i < data.length; i++) {
+        for (let i = 0; i < data.length; i++) {
             point = data[i];
             time = Date.parse(point.time);
 
@@ -90,24 +121,38 @@ function Visualisation() {
     }
 
     function redrawLines() {
-        gAcc.redrawLines(accQueue);
-        gGyro.redrawLines(gyroQueue);
-        gMag.redrawLines(magQueue);
+        gAccTime.redrawLines(accQueue);
+        gGyroTime.redrawLines(gyroQueue);
+        gMagTime.redrawLines(magQueue);
     }
 
     function redrawAxes(startTime, endTime) {
-        gAcc.redrawAxes(startTime, endTime, gAccYDomain);
-        gGyro.redrawAxes(startTime, endTime, gGyroYDomain);
-        gMag.redrawAxes(startTime, endTime, gMagYDomain);
+        gAccTime.redrawAxes(startTime, endTime, gAccYDomain);
+        gGyroTime.redrawAxes(startTime, endTime, gGyroYDomain);
+        gMagTime.redrawAxes(startTime, endTime, gMagYDomain);
     }
 
-    // Pad zeros to index JSON data
-    Number.prototype.pad = function(size) {
-        var s = String(this);
-        while (s.length < (size || 2)) {s = "0" + s;}
-        return s;
+    this.loadJSON = function(callback) {
+        const xobj = new XMLHttpRequest();
+        xobj.overrideMimeType("application/json");
+        xobj.open('GET', '../result.json', true);
+        xobj.onreadystatechange = function () {
+            if (xobj.readyState === 4 && xobj.status === 200)
+                callback(xobj.responseText);
+        };
+        xobj.send(null);
     };
 
+    this.processDataSet = function(data) {
+        let batchId = 0;
+        let batchData;
+        const dataSet = JSON.parse(data);
+
+        for (let i = 0; i < 10000; i++) {
+            batchData = dataSet.slice(batchId, batchId += 100);
+            setTimeout(visualisation.processNewData.bind('data', batchData), i*1000);
+        }
+    }
 }
 
 

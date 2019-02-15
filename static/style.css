@@ -6,31 +6,45 @@
     width: 50%;
 }
 
-.acc {
+.accTime {
     grid-row-start: 1;
     grid-column-start:1;
     grid-row-end: 1;
     grid-column-end: 1;
 }
 
-.gyro {
+.gyroTime {
     grid-row-start: 1;
     grid-column-start:2;
     grid-row-end: 1;
     grid-column-end: 2;
 }
 
-.mag {
+.magTime {
     grid-row-start: 2;
     grid-column-start:1;
     grid-row-end: 2;
     grid-column-end: 1;
 }
 
-.bat {
+.accFreq {
     grid-row-start: 2;
     grid-column-start:2;
     grid-row-end: 2;
+    grid-column-end: 2;
+}
+
+.gyroFreq {
+    grid-row-start: 3;
+    grid-column-start:1;
+    grid-row-end: 3;
+    grid-column-end: 1;
+}
+
+.magFreq {
+    grid-row-start: 3;
+    grid-column-start:2;
+    grid-row-end: 3;
     grid-column-end: 2;
 }
 
