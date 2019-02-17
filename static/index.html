@@ -6,6 +6,7 @@
 </head>
 <body>
     <div class="container">
+        <!-- Time Domain -->
         <div class="item accTime">
             <h4>Accelerometer Time Domain</h4>
             <svg id="accTime"></svg>
@@ -21,19 +22,53 @@
             <svg id="magTime"></svg>
         </div>
 
-        <div class="item accFreq">
-            <h4>Accelerometer Frequency Domain</h4>
-            <svg id="accFreq"></svg>
+        <!-- Frequency Domain -->
+        <!-- Accelerometer -->
+        <div class="item accXFreq">
+            <h4>Acc X Frequency Domain</h4>
+            <svg id="accXFreq"></svg>
         </div>
 
-        <div class="item gyroFreq">
-            <h4>Gyroscope Frequency Domain</h4>
-            <svg id="gyroFreq"></svg>
+        <div class="item accYFreq">
+            <h4>Acc Y Frequency Domain</h4>
+            <svg id="accYFreq"></svg>
         </div>
 
-        <div class="item magFreq">
-            <h4>Magnetometer Frequency Domain</h4>
-            <svg id="magFreq"></svg>
+        <div class="item accZFreq">
+            <h4>Acc Z Frequency Domain</h4>
+            <svg id="accZFreq"></svg>
+        </div>
+
+        <!-- Gyroscope -->
+        <div class="item gyroXFreq">
+            <h4>Gyro X Frequency Domain</h4>
+            <svg id="gyroXFreq"></svg>
+        </div>
+
+        <div class="item gyroYFreq">
+            <h4>Gyro Y Frequency Domain</h4>
+            <svg id="gyroYFreq"></svg>
+        </div>
+
+        <div class="item gyroZFreq">
+            <h4>Gyro Z Frequency Domain</h4>
+            <svg id="gyroZFreq"></svg>
+        </div>
+
+        <!-- Magnetometer -->
+        <div class="item magXFreq">
+            <h4>Mag X Frequency Domain</h4>
+            <svg id="magXFreq"></svg>
+        </div>
+
+        <div class="item magYFreq">
+            <h4>Mag Y Frequency Domain</h4>
+            <svg id="magYFreq"></svg>
+        </div>
+
+        <div class="item magZFreq">
+            <h4>Mag Z Frequency Domain</h4>
+            <svg id="magZFreq"></svg>
         </div>
     </div>
 </body>
@@ -47,13 +82,13 @@
 <script>
     const visualisation = new Visualisation();
     visualisation.init();
-    visualisation.loadJSON(visualisation.processLocalDataSet);
+    // visualisation.loadJSON(visualisation.processLocalDataSet);
 
-    // const socket = io.connect();
-    // console.log(socket);
-    // socket.on('news', function (data) {
-        // visualisation.processNewData(data);
-        // socket.emit('my other event', { my: 'data' });
-    // });
+    const socket = io.connect();
+    console.log(socket);
+    socket.on('news', function (data) {
+        visualisation.processNewData(data);
+        socket.emit('my other event', { my: 'data' });
+    });
 </script>
 </html>

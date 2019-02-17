@@ -35,40 +35,67 @@ const selectors = {
             z: ' magZ line'
         }
     },
-    gAccFreq: {
-        graph: '#accFreq',
+    gAccXFreq: {
+        graph: '#accXFreq',
         axes: {
-            x: ' acc x freq axis',
-            y: ' acc y freq axis'
-        },
-        bars: {
-            x: ' acc x bar',
-            y: ' acc y bar',
-            z: ' acc z bar'
+            x: ' accX x freq axis',
+            y: ' accX y freq axis'
         }
     },
-    gGyroFreq: {
-        graph: '#gyroFreq',
+    gAccYFreq: {
+        graph: '#accYFreq',
+        axes: {
+            x: ' accY x freq axis',
+            y: ' accY y freq axis'
+        }
+    },
+    gAccZFreq: {
+        graph: '#accZFreq',
+        axes: {
+            x: ' accZ x freq axis',
+            y: ' accZ y freq axis'
+        }
+    },
+    gGyroXFreq: {
+        graph: '#gyroXFreq',
         axes: {
             x: ' gyro x freq axis',
             y: ' gyro y freq axis'
-        },
-        bars: {
-            x: ' gyro x bar',
-            y: ' gyro y bar',
-            z: ' gyro z bar'
         }
     },
-    gMagFreq: {
-        graph: '#magFreq',
+    gGyroYFreq: {
+        graph: '#gyroYFreq',
+        axes: {
+            x: ' gyro x freq axis',
+            y: ' gyro y freq axis'
+        }
+    },
+    gGyroZFreq: {
+        graph: '#gyroZFreq',
+        axes: {
+            x: ' gyro x freq axis',
+            y: ' gyro y freq axis'
+        }
+    },
+    gMagXFreq: {
+        graph: '#magXFreq',
         axes: {
             x: ' mag x freq axis',
             y: ' mag y freq axis'
-        },
-        bars: {
-            x: ' mag x bar',
-            y: ' mag y bar',
-            z: ' mag z bar'
+        }
+    },
+    gMagYFreq: {
+        graph: '#magYFreq',
+        axes: {
+            x: ' mag x freq axis',
+            y: ' mag y freq axis'
+        }
+    },
+    gMagZFreq: {
+        graph: '#magZFreq',
+        axes: {
+            x: ' mag x freq axis',
+            y: ' mag y freq axis'
         }
     }
 };
