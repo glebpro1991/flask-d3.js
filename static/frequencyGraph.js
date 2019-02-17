@@ -1,6 +1,8 @@
 function FrequencyGraph() {
     let graph, xScale, yScale,
-        xAxis, yAxis;
+        xAxis, yAxis,
+        barX, barY, barZ,
+        data = [];
 
     const graphDim = {
         margins: {
@@ -9,14 +11,16 @@ function FrequencyGraph() {
             bottom: 20,
             left: 50
         },
-        width: 700,
+        width: 768,
         height: 200
     };
 
-    let selectors;
+    let x, y, barWidth, selectors;
+
 
     this.init = function(sel) {
         selectors = sel;
+        initArray();
         initGraph();
         initAxes();
         appendAxes();
@@ -30,6 +34,29 @@ function FrequencyGraph() {
             .attr('height', graphDim.height
                 + graphDim.margins.top
                 + graphDim.margins.bottom);
+
+        barWidth = (graphDim.width/data.length);
+
+        graph.selectAll("rect")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("y", function(d) {
+                return graphDim.height - d
+            })
+            .attr("height", function(d) {
+                return d;
+            })
+            .attr("width", barWidth)
+            .attr("transform", function (d, i) {
+                let translate = [barWidth * i, 0];
+                return "translate("+ translate +")";
+            });
+
+    }
+
+    function initBarFunctions() {
+
     }
 
     function initAxes() {
@@ -39,6 +66,7 @@ function FrequencyGraph() {
         yScale = d3.scaleLinear()
             .range([graphDim.height - graphDim.margins.top,
                 graphDim.margins.bottom]);
+
         xAxis = d3.axisBottom()
             .scale(xScale);
         yAxis = d3.axisLeft()
@@ -46,13 +74,25 @@ function FrequencyGraph() {
     }
 
     function appendAxes() {
-        graph.append("svg:g")
-            .attr('class', selectors.axes.x)
-            .attr("transform", "translate(0," + (graphDim.height - graphDim.margins.bottom) + ")")
-            .call(xAxis);
-        graph.append("svg:g")
-            .attr('class', selectors.axes.y)
-            .attr("transform", "translate(" + (graphDim.margins.left) + ",0)")
-            .call(yAxis);
+
+    }
+
+    function initArray() {
+        for (let i = 0; i < 256; i++) {
+            data[i] = i;
+        }
+        console.log(data);
+    }
+
+    // this.redrawAxis = function(max) {
+    //     yScale.domain([0, max]);
+    //     yAxis = d3.axisLeft()
+    //         .scale(yScale);
+    //     graph.selectAll(getD3Selector(selectors.axes.y))
+    //         .call(yAxis);
+    // };
+
+    function getD3Selector(selector) {
+        return selector.split(' ').join('.');
     }
 }

@@ -4,6 +4,8 @@ function TimeGraph() {
         xAxis, yAxis,
         lineX, lineY, lineZ;
 
+    const offset = 5;
+
     const graphDim = {
         margins: {
             top: 20,
@@ -107,9 +109,9 @@ function TimeGraph() {
             .attr('d', lineZ(queue));
     };
 
-    this.redrawAxes = function(timeStart, timeEnd, yDomain) {
+    this.redrawAxes = function(timeStart, timeEnd, max, min) {
         xScale.domain([timeStart, timeEnd]);
-        yScale.domain([-Math.abs(yDomain), yDomain]);
+        yScale.domain([min - offset, max + offset]);
         xAxis = d3.axisBottom()
             .scale(xScale)
             .ticks(5);

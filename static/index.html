@@ -38,6 +38,8 @@
     </div>
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="fftFunctions.js"></script>
+<script src="selectors.js"></script>
 <script src="timeGraph.js"></script>
 <script src="frequencyGraph.js"></script>
 <script src="visualisation.js"></script>
@@ -45,13 +47,13 @@
 <script>
     const visualisation = new Visualisation();
     visualisation.init();
-    // visualisation.loadJSON(visualisation.processDataSet); // Testing
+    // visualisation.loadJSON(visualisation.processLocalDataSet);
 
-    var socket = io.connect();
-    console.log(socket);
-    socket.on('news', function (data) {
-        visualisation.processNewData(data);
-        socket.emit('my other event', { my: 'data' });
-    });
+    // const socket = io.connect();
+    // console.log(socket);
+    // socket.on('news', function (data) {
+        // visualisation.processNewData(data);
+        // socket.emit('my other event', { my: 'data' });
+    // });
 </script>
 </html>

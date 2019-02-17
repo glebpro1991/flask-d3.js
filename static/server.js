@@ -47,6 +47,6 @@ function send(jsonArr) {
     console.log('sending');
     clientSocket.emit('news', jsonArr);
     clientSocket.on('my other event', function (data) {
-        console.log('received');
+        // console.log('received');
     });
 }

@@ -1,136 +1,187 @@
 
 function Visualisation() {
-    let accQueue = [], gyroQueue = [], magQueue = [],
+    let accTimeQ = [], gyroTimeQ = [], magTimeQ = [],
+        accXAmpl = [], accYAmpl = [], accZAmpl = [],
+        gyroXAmpl = [], gyroYAmpl = [], gyroZAmpl = [],
+        magXAmpl = [], magYAmpl = [], magZAmpl = [],
         gAccTime, gGyroTime, gMagTime,
         gAccFreq, gGyroFreq, gMagFreq,
-        queueSize = 5000,
-        gAccYDomain = 50,
-        gGyroYDomain = 25,
-        gMagYDomain = 500;
+        qSize = 5000;
 
     this.init = function() {
-        createGraphs();
+        createTimeGraphs();
+        createFrequencyGraphs();
     };
 
-    function createGraphs() {
-        let selectors;
-
+    function createTimeGraphs() {
         gAccTime = new TimeGraph();
-        selectors = {
-            graph: '#accTime',
-            axes: {
-                x: ' acc x time axis',
-                y: ' acc y time axis'
-            },
-            lines: {
-                x:' accX line',
-                y:' accY line',
-                z:' accZ line'
-            }
-        };
-        gAccTime.init(selectors);
-
+        gAccTime.init(selectors.gAccTime);
         gGyroTime = new TimeGraph();
-        selectors = {
-            graph: '#gyroTime',
-            axes: {
-                x: ' gyro x time axis',
-                y: ' gyro y time axis'
-            },
-            lines: {
-                x:' gyroX line',
-                y:' gyroY line',
-                z:' gyroZ line'
-            }
-        };
-        gGyroTime.init(selectors);
-
+        gGyroTime.init(selectors.gGyroTime);
         gMagTime = new TimeGraph();
-        selectors = {
-            graph: '#magTime',
-            axes: {
-                x: ' mag x time axis',
-                y: ' mag y time axis'
-            },
-            lines: {
-                x:' magX line',
-                y:' magY line',
-                z:' magZ line'
-            }
-        };
-        gMagTime.init(selectors);
-
-        gAccFreq = new FrequencyGraph();
-        selectors = {
-            graph: '#accFreq',
-            axes: {
-                x: ' acc x freq axis',
-                y: ' acc y freq axis'
-            }
-        };
-        gAccFreq.init(selectors);
-
-        gGyroFreq = new FrequencyGraph();
-        selectors = {
-            graph: '#gyroFreq',
-            axes: {
-                x: ' gyro x freq axis',
-                y: ' gyro y freq axis'
-            }
-        };
-        gGyroFreq.init(selectors);
-
-        gMagFreq = new FrequencyGraph();
-        selectors = {
-            graph: '#magFreq',
-            axes: {
-                x: ' mag x freq axis',
-                y: ' mag y freq axis'
-            }
-        };
-        gMagFreq.init(selectors);
+        gMagTime.init(selectors.gMagTime);
     }
 
-    this.processNewData = function(data) {
-        let acc, gyro, mag, time, point;
+    function createFrequencyGraphs() {
+        gAccFreq = new FrequencyGraph();
+        gAccFreq.init(selectors.gAccFreq);
+        // gGyroFreq = new FrequencyGraph();
+        // gGyroFreq.init(selectors.gGyroFreq);
+        // gMagFreq = new FrequencyGraph();
+        // gMagFreq.init(selectors.gMagFreq);
+    }
 
+    function populateTimeSeries(data) {
         for (let i = 0; i < data.length; i++) {
-            point = data[i];
-            time = Date.parse(point.time);
+            let p = data[i];
 
-            acc = getDataPoint(time, parseInt(point.accX), parseInt(point.accY), parseInt(point.accZ));
-            gyro = getDataPoint(time, parseInt(point.gyroX), parseInt(point.gyroY), parseInt(point.gyroZ));
-            mag = getDataPoint(time, parseInt(point.magX), parseInt(point.magY), parseInt(point.magZ));
+            let accPoint = getTimeDataPoint(p.time, p.accX, p.accY, p.accZ);
+            accXAmpl.push(accPoint.x);
+            accYAmpl.push(accPoint.y);
+            accZAmpl.push(accPoint.z);
+            if(accTimeQ.push(accPoint) === qSize)
+                accTimeQ.shift();
 
-            if(accQueue.push(acc) === queueSize)
-                accQueue.shift();
+            let gyroPoint = getTimeDataPoint(p.time, p.gyroX, p.gyroY, p.gyroZ);
+            gyroXAmpl.push(gyroPoint.x);
+            gyroYAmpl.push(gyroPoint.y);
+            gyroZAmpl.push(gyroPoint.z);
+            if(gyroTimeQ.push(gyroPoint) === qSize)
+                gyroTimeQ.shift();
 
-            if(gyroQueue.push(gyro) === queueSize)
-                gyroQueue.shift();
-
-            if(magQueue.push(mag) === queueSize)
-                magQueue.shift();
+            let magPoint = getTimeDataPoint(p.time, p.magX, p.magY, p.magZ);
+            magXAmpl.push(magPoint.x);
+            magYAmpl.push(magPoint.y);
+            magZAmpl.push(magPoint.z);
+            if(magTimeQ.push(magPoint) === qSize)
+                magTimeQ.shift();
         }
 
-        redrawAxes(accQueue[0].timestamp, accQueue[accQueue.length - 1].timestamp);
-        redrawLines();
-    };
+        if(accXAmpl.length === 300) {
+            populateFrequencyData();
+            resetAmplArrays();
+        }
 
-    function getDataPoint(time, x, y, z) {
-        return { timestamp: time, x: x, y: y, z: z};
+        updateView();
+    }
+
+    function resetAmplArrays() {
+        accXAmpl = [];
+        accXAmpl = [];
+        accZAmpl = [];
+        gyroXAmpl = [];
+        gyroYAmpl = [];
+        gyroZAmpl = [];
+        magXAmpl = [];
+        magYAmpl = [];
+        magZAmpl = [];
+    }
+
+    function updateView() {
+        redrawTimeAxes(accTimeQ[0].timestamp,
+            accTimeQ[accTimeQ.length - 1].timestamp);
+        redrawLines();
+    }
+
+    function populateFrequencyData() {
+        let fft = {
+            acc: {
+                x: cfft(accXAmpl.slice(0, 256)),
+                y: cfft(accYAmpl.slice(0, 256)),
+                z: cfft(accZAmpl.slice(0, 256))
+            },
+            gyro: {
+                x: cfft(gyroXAmpl.slice(0, 256)),
+                y: cfft(gyroYAmpl.slice(0, 256)),
+                z: cfft(gyroZAmpl.slice(0, 256))
+            },
+            mag: {
+                x: cfft(magXAmpl.slice(0, 256)),
+                y: cfft(magYAmpl.slice(0, 256)),
+                z: cfft(magZAmpl.slice(0, 256))
+            }
+        };
+        redrawFreqAxes(fft);
+    }
+
+    function getTimeDataPoint(time, x, y, z) {
+        return {
+            timestamp: Date.parse(time),
+            x: parseFloat(x),
+            y: parseFloat(y),
+            z: parseFloat(z)
+        };
     }
 
     function redrawLines() {
-        gAccTime.redrawLines(accQueue);
-        gGyroTime.redrawLines(gyroQueue);
-        gMagTime.redrawLines(magQueue);
+        gAccTime.redrawLines(accTimeQ);
+        gGyroTime.redrawLines(gyroTimeQ);
+        gMagTime.redrawLines(magTimeQ);
     }
 
-    function redrawAxes(startTime, endTime) {
-        gAccTime.redrawAxes(startTime, endTime, gAccYDomain);
-        gGyroTime.redrawAxes(startTime, endTime, gGyroYDomain);
-        gMagTime.redrawAxes(startTime, endTime, gMagYDomain);
+    function redrawTimeAxes(startTime, endTime) {
+        let accData = getArrayProperties(accTimeQ);
+        let gyroData = getArrayProperties(gyroTimeQ);
+        let magData = getArrayProperties(magTimeQ);
+
+        gAccTime.redrawAxes(startTime, endTime,
+            getMax(accData),
+            getMin(accData));
+        gGyroTime.redrawAxes(startTime, endTime,
+            getMax(gyroData),
+            getMin(gyroData));
+        gMagTime.redrawAxes(startTime, endTime,
+            getMax(magData),
+            getMin(magData));
     }
+
+    function getArrayProperties(arr) {
+        return arr.map(a => a.x)
+            .concat(arr.map(a => a.y))
+            .concat(arr.map(a => a.z));
+    }
+
+    function getArraysProperty(xFft, yFft, zFft) {
+        return xFft.map(a => a.re)
+            .concat(yFft.map(a => a.re))
+            .concat(zFft.map(a => a.re));
+    }
+
+    function getMax(arr) {
+        return Math.max.apply(null, arr);
+    }
+
+    function getMin(arr) {
+        return Math.min.apply(null, arr);
+    }
+
+    function redrawFreqAxes(fft) {
+        let realAccComponents = getArraysProperty(
+            fft.acc.x,
+            fft.acc.y,
+            fft.acc.z);
+        let realGyroComponents = getArraysProperty(
+            fft.gyro.x,
+            fft.acc.y,
+            fft.gyro.z);
+        let realMagComponents = getArraysProperty(
+            fft.mag.x,
+            fft.mag.y,
+            fft.mag.z);
+
+        // gAccFreq.redrawAxis(getMax(realAccComponents));
+        // gGyroFreq.redrawAxis(getMax(realGyroComponents));
+        // gMagFreq.redrawAxis(getMax(realMagComponents));
+
+    }
+
+    function redrawBars() {
+
+    }
+
+    this.processNewData = function(data) {
+        populateTimeSeries(data);
+    };
 
     this.loadJSON = function(callback) {
         const xobj = new XMLHttpRequest();
@@ -143,14 +194,14 @@ function Visualisation() {
         xobj.send(null);
     };
 
-    this.processDataSet = function(data) {
+    this.processLocalDataSet = function(data) {
         let batchId = 0;
         let batchData;
         const dataSet = JSON.parse(data);
 
-        for (let i = 0; i < 10000; i++) {
+        for (let i = 0; i < 50000; i++) {
             batchData = dataSet.slice(batchId, batchId += 100);
-            setTimeout(visualisation.processNewData.bind('data', batchData), i*1000);
+            setTimeout(visualisation.processNewData.bind('data', batchData), i*500);
         }
     }
 }
