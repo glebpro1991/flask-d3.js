@@ -114,6 +114,7 @@ function TimeGraph() {
         yScale.domain([min - offset, max + offset]);
         xAxis = d3.axisBottom()
             .scale(xScale)
+            .tickFormat(d3.timeFormat('%H:%M:%S'))
             .ticks(5);
         yAxis = d3.axisLeft()
             .scale(yScale)

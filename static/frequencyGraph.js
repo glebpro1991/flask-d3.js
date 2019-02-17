@@ -1,8 +1,8 @@
 function FrequencyGraph() {
-    let graph, xScale, yScale,
-        xAxis, yAxis,
+    let graph, xScale, yScale, g,
         barX, barY, barZ,
-        data = [];
+        data = [],
+        selectors;
 
     const graphDim = {
         margins: {
@@ -11,20 +11,29 @@ function FrequencyGraph() {
             bottom: 20,
             left: 50
         },
-        width: 768,
+        width: 700,
         height: 200
     };
 
-    let x, y, barWidth, selectors;
-
-
     this.init = function(sel) {
         selectors = sel;
-        initArray();
-        initGraph();
+        initArrays();
         initAxes();
-        appendAxes();
+        initGraph();
+        redrawBars();
     };
+
+    function initAxes() {
+        xScale = d3.scaleBand()
+            .range([graphDim.margins.left,
+                graphDim.width - graphDim.margins.right]);
+        yScale = d3.scaleLinear()
+            .range([graphDim.height - graphDim.margins.top,
+                graphDim.margins.bottom]);
+
+        xScale.domain(data.map(function(d) { return d.index; }));
+        yScale.domain([0, d3.max(data, function(d) { return d.value; })]);
+    }
 
     function initGraph() {
         graph = d3.select(selectors.graph)
@@ -35,64 +44,94 @@ function FrequencyGraph() {
                 + graphDim.margins.top
                 + graphDim.margins.bottom);
 
-        barWidth = (graphDim.width/data.length);
+        g = graph.append("g");
+        g.append("g")
+            .attr("transform", "translate(0," + (graphDim.height - graphDim.margins.bottom) + ")")
+            .call(d3.axisBottom(xScale));
+        g.append("g")
+            .attr("transform", "translate(" + (graphDim.margins.left) + ",0)")
+            .call(d3.axisLeft(yScale));
+    }
 
-        graph.selectAll("rect")
+    function redrawBars() {
+        g.selectAll(".bar")
             .data(data)
-            .enter()
-            .append("rect")
-            .attr("y", function(d) {
-                return graphDim.height - d
-            })
-            .attr("height", function(d) {
-                return d;
-            })
-            .attr("width", barWidth)
-            .attr("transform", function (d, i) {
-                let translate = [barWidth * i, 0];
-                return "translate("+ translate +")";
-            });
-
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", function(d) { return xScale(d.index); })
+            .attr("y", function(d) { return yScale(d.value); })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function(d) { return graphDim.height - graphDim.margins.bottom  - yScale(d.value); });
     }
 
-    function initBarFunctions() {
 
-    }
-
-    function initAxes() {
-        xScale = d3.scaleLinear()
-            .range([graphDim.margins.left,
-                graphDim.width - graphDim.margins.right]);
-        yScale = d3.scaleLinear()
-            .range([graphDim.height - graphDim.margins.top,
-                graphDim.margins.bottom]);
-
-        xAxis = d3.axisBottom()
-            .scale(xScale);
-        yAxis = d3.axisLeft()
-            .scale(yScale);
-    }
-
-    function appendAxes() {
-
-    }
-
-    function initArray() {
-        for (let i = 0; i < 256; i++) {
-            data[i] = i;
-        }
-        console.log(data);
-    }
-
-    // this.redrawAxis = function(max) {
-    //     yScale.domain([0, max]);
+    //
+    // function initAxes() {
+    //     xScale = d3.scaleBand().range([graphDim.margins.left, graphDim.width]);
+    //     yScale = d3.scaleLinear().range([graphDim.height - graphDim.margins.bottom, 0]);
+    //
+    //     xScale.domain(data.map(function(d, i) {
+    //         return i;
+    //     }));
+    //     yScale.domain([0, d3.max(data, function(d) {
+    //         return d.value;
+    //     })]);
+    //
+    //     xAxis = d3.axisBottom()
+    //         .scale(xScale);
     //     yAxis = d3.axisLeft()
     //         .scale(yScale);
-    //     graph.selectAll(getD3Selector(selectors.axes.y))
+    // }
+    //
+    // function appendAxes() {
+    //     graph.append("svg:g")
+    //         .attr('class', selectors.axes.x)
+    //         .attr("transform", "translate(0," + (graphDim.height - graphDim.margins.bottom) + ")")
+    //         .call(xAxis);
+    //     graph.append("svg:g")
+    //         .attr('class', selectors.axes.y)
+    //         .attr("transform", "translate(" + (graphDim.margins.left) + ",0)")
     //         .call(yAxis);
-    // };
-
-    function getD3Selector(selector) {
-        return selector.split(' ').join('.');
+    // }
+    //
+    // function redrawBars() {
+    //     graph.selectAll("rect")
+    //         .data(data)
+    //         .enter()
+    //         .append("rect")
+    //         .attr("class", "bar")
+    //         .attr("x", function(d) { return xScale(d.value); })
+    //         .attr("y", function(d, i) { return yScale(i); })
+    //         .attr("height", function(d) {
+    //             return graphDim.height - yScale(d.value) - graphDim.margins.bottom;
+    //         })
+    //         .attr("width", xScale.bandwidth());
+    //
+    //     xAxis = d3.axisBottom()
+    //         .scale(xScale);
+    //
+    //     graph.selectAll(getD3Selector(selectors.axes.x))
+    //         .call(xAxis);
+    // }
+    //
+    function initArrays() {
+        for (let i = 0; i < 256; i++) {
+            data[i] = {index: i, value: Math.floor(Math.random() * (2000))};
+        }
+        //
+        console.log(data);
     }
+    //
+    // // function redrawAxes(max) {
+    // //     yScale.domain([0, max]);
+    // //     yAxis = d3.axisLeft()
+    // //         .scale(yScale)
+    // //
+    // //     graph.selectAll(getD3Selector(selectors.axes.y))
+    // //         .call(yAxis);
+    // // };
+    //
+    // function getD3Selector(selector) {
+    //     return selector.split(' ').join('.');
+    // }
 }
