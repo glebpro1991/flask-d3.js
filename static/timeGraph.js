@@ -3,24 +3,10 @@ function TimeGraph() {
     let graph, xScale, yScale,
         xAxis, yAxis,
         lineX, lineY, lineZ;
+    let sel;
 
-    const offset = 5;
-
-    const graphDim = {
-        margins: {
-            top: 20,
-            right: 20,
-            bottom: 20,
-            left: 50
-        },
-        width: 700,
-        height: 200
-    };
-
-    let selectors;
-
-    this.init = function(sel) {
-        selectors = sel;
+    this.init = function(selectors) {
+        sel = selectors;
         initGraph();
         initAxes();
         appendAxes();
@@ -29,13 +15,13 @@ function TimeGraph() {
     };
 
     function initGraph() {
-        graph = d3.select(selectors.graph)
-            .attr('width', graphDim.width
-                + graphDim.margins.left
-                + graphDim.margins.right)
-            .attr('height', graphDim.height
-                + graphDim.margins.top
-                + graphDim.margins.bottom);
+        graph = d3.select(sel.graph)
+            .attr('width', props.dimensions.width
+                + props.dimensions.margins.left
+                + props.dimensions.margins.right)
+            .attr('height', props.dimensions.height
+                + props.dimensions.margins.top
+                + props.dimensions.margins.bottom);
     }
 
     function initLineFunctions() {
@@ -60,11 +46,11 @@ function TimeGraph() {
 
     function initAxes() {
         xScale = d3.scaleLinear()
-            .range([graphDim.margins.left,
-                graphDim.width - graphDim.margins.right]);
+            .range([props.dimensions.margins.left,
+                props.dimensions.width - props.dimensions.margins.right]);
         yScale = d3.scaleLinear()
-            .range([graphDim.height - graphDim.margins.top,
-                graphDim.margins.bottom]);
+            .range([props.dimensions.height - props.dimensions.margins.top,
+                props.dimensions.margins.bottom]);
         xAxis = d3.axisBottom()
             .scale(xScale)
             .ticks(5);
@@ -74,9 +60,9 @@ function TimeGraph() {
     }
 
     function initLines() {
-        initLine(selectors.lines.x, 'red');
-        initLine(selectors.lines.y, 'blue');
-        initLine(selectors.lines.z, 'green');
+        initLine(sel.lines.x, props.colors.x);
+        initLine(sel.lines.y, props.colors.y);
+        initLine(sel.lines.z, props.colors.z);
     }
 
     function initLine(className, color) {
@@ -89,29 +75,29 @@ function TimeGraph() {
 
     function appendAxes() {
         graph.append("svg:g")
-            .attr('class', selectors.axes.x)
-            .attr("transform", "translate(0," + (graphDim.height - graphDim.margins.bottom) + ")")
+            .attr('class', sel.axes.x)
+            .attr("transform", "translate(0," + (props.dimensions.height - props.dimensions.margins.bottom) + ")")
             .call(xAxis);
         graph.append("svg:g")
-            .attr('class', selectors.axes.y)
-            .attr("transform", "translate(" + (graphDim.margins.left) + ",0)")
+            .attr('class', sel.axes.y)
+            .attr("transform", "translate(" + (props.dimensions.margins.left) + ",0)")
             .call(yAxis);
     }
 
     this.redrawLines = function(queue) {
-        graph.select(getD3Selector(selectors.lines.x))
+        graph.select(getD3Selector(sel.lines.x))
             .attr('d', lineX(queue));
 
-        graph.select(getD3Selector(selectors.lines.y))
+        graph.select(getD3Selector(sel.lines.y))
             .attr('d', lineY(queue));
 
-        graph.select(getD3Selector(selectors.lines.z))
+        graph.select(getD3Selector(sel.lines.z))
             .attr('d', lineZ(queue));
     };
 
     this.redrawAxes = function(timeStart, timeEnd, max, min) {
         xScale.domain([timeStart, timeEnd]);
-        yScale.domain([min - offset, max + offset]);
+        yScale.domain([min - props.dimensions.offset, max + props.dimensions.offset]);
         xAxis = d3.axisBottom()
             .scale(xScale)
             .tickFormat(d3.timeFormat('%H:%M:%S'))
@@ -120,10 +106,10 @@ function TimeGraph() {
             .scale(yScale)
             .ticks(5);
 
-        graph.selectAll(getD3Selector(selectors.axes.x))
+        graph.selectAll(getD3Selector(sel.axes.x))
             .call(xAxis);
 
-        graph.selectAll(getD3Selector(selectors.axes.y))
+        graph.selectAll(getD3Selector(sel.axes.y))
             .call(yAxis);
     };
 

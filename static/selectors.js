@@ -1,3 +1,22 @@
+const props = {
+    dimensions: {
+        margins: {
+            top: 20,
+            right: 20,
+            bottom: 20,
+            left: 50
+        },
+        width: 768,
+        height: 200,
+        offset: 5
+    },
+    colors: {
+        x: "red",
+        y: "green",
+        z: "blue"
+    }
+};
+
 const selectors = {
     gAccTime: {
         graph: '#accTime',
@@ -35,64 +54,22 @@ const selectors = {
             z: ' magZ line'
         }
     },
-    gAccXFreq: {
-        graph: '#accXFreq',
+    gAccFreq: {
+        graph: '#accFreq',
         axes: {
             x: ' accX x freq axis',
             y: ' accX y freq axis'
         }
     },
-    gAccYFreq: {
-        graph: '#accYFreq',
-        axes: {
-            x: ' accY x freq axis',
-            y: ' accY y freq axis'
-        }
-    },
-    gAccZFreq: {
-        graph: '#accZFreq',
-        axes: {
-            x: ' accZ x freq axis',
-            y: ' accZ y freq axis'
-        }
-    },
-    gGyroXFreq: {
-        graph: '#gyroXFreq',
+    gGyroFreq: {
+        graph: '#gyroFreq',
         axes: {
             x: ' gyro x freq axis',
             y: ' gyro y freq axis'
         }
     },
-    gGyroYFreq: {
-        graph: '#gyroYFreq',
-        axes: {
-            x: ' gyro x freq axis',
-            y: ' gyro y freq axis'
-        }
-    },
-    gGyroZFreq: {
-        graph: '#gyroZFreq',
-        axes: {
-            x: ' gyro x freq axis',
-            y: ' gyro y freq axis'
-        }
-    },
-    gMagXFreq: {
-        graph: '#magXFreq',
-        axes: {
-            x: ' mag x freq axis',
-            y: ' mag y freq axis'
-        }
-    },
-    gMagYFreq: {
-        graph: '#magYFreq',
-        axes: {
-            x: ' mag x freq axis',
-            y: ' mag y freq axis'
-        }
-    },
-    gMagZFreq: {
-        graph: '#magZFreq',
+    gMagFreq: {
+        graph: '#magFreq',
         axes: {
             x: ' mag x freq axis',
             y: ' mag y freq axis'

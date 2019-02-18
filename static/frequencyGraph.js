@@ -1,44 +1,33 @@
 function FrequencyGraph() {
     let graph, xScale, yScale, g,
         xAxis, yAxis,
-        selectors;
+        sel;
 
-    const graphDim = {
-        margins: {
-            top: 20,
-            right: 20,
-            bottom: 20,
-            left: 50
-        },
-        width: 400,
-        height: 200
-    };
-
-    this.init = function(sel) {
-        selectors = sel;
+    this.init = function(selectors) {
+        sel = selectors;
         initAxes();
         initGraph();
         appendAxes();
     };
 
     function initGraph() {
-        graph = d3.select(selectors.graph)
-            .attr('width', graphDim.width
-                + graphDim.margins.left
-                + graphDim.margins.right)
-            .attr('height', graphDim.height
-                + graphDim.margins.top
-                + graphDim.margins.bottom);
+        graph = d3.select(sel.graph)
+            .attr('width', props.dimensions.width
+                + props.dimensions.margins.left
+                + props.dimensions.margins.right)
+            .attr('height', props.dimensions.height
+                + props.dimensions.margins.top
+                + props.dimensions.margins.bottom);
         g = graph.append("g");
     }
 
     function initAxes() {
         xScale = d3.scaleBand()
-            .range([graphDim.margins.left,
-                graphDim.width - graphDim.margins.right]);
+            .range([props.dimensions.margins.left,
+                props.dimensions.width - props.dimensions.margins.right]);
         yScale = d3.scaleLinear()
-            .range([graphDim.height - graphDim.margins.top,
-                graphDim.margins.bottom]);
+            .range([props.dimensions.height - props.dimensions.margins.top,
+                props.dimensions.margins.bottom]);
         xAxis = d3.axisBottom()
             .scale(xScale);
         yAxis = d3.axisLeft()
@@ -47,12 +36,12 @@ function FrequencyGraph() {
 
     function appendAxes() {
         graph.append("svg:g")
-            .attr('class', selectors.axes.x)
-            .attr("transform", "translate(0," + (graphDim.height - graphDim.margins.bottom) + ")")
+            .attr('class', sel.axes.x)
+            .attr("transform", "translate(0," + (props.dimensions.height - props.dimensions.margins.bottom) + ")")
             .call(xAxis);
         graph.append("svg:g")
-            .attr('class', selectors.axes.y)
-            .attr("transform", "translate(" + (graphDim.margins.left) + ",0)")
+            .attr('class', sel.axes.y)
+            .attr("transform", "translate(" + (props.dimensions.margins.left) + ",0)")
             .call(yAxis);
     }
 
@@ -60,38 +49,66 @@ function FrequencyGraph() {
         return selector.split(' ').join('.');
     }
 
-    this.redraw = function(data, color) {
-        // let stack = d3.stack()
-        //     .keys("x", "y", "z")
-        //     .order(d3.stackOrderNone)
-        //     .offset(d3.stackOffsetNone);
-        //
-        // let series = stack(data);
-        // console.log(series);
+    this.redraw = function(data) {
+        // Construct array of objects
+        let vals = [];
+        for (let i = 0; i < 255; i++) {
+            vals[i] = {
+                "index": i,
+                "x": data.x[i].value,
+                "y": data.y[i].value,
+                "z": data.z[i].value};
+        }
 
-        let newData = data.map(function(d, i) {
-            return {index: i, value: Math.sqrt(d.re*d.re + d.im*d.im)} ;
-        });
+        // Combine the arrays to determine maximum value for y axis
+        let combinedArr = data.x.map(a => a.value)
+            .concat(data.y.map(a => a.value))
+            .concat(data.z.map(a => a.value));
+        let maxValue = Math.max.apply(null, combinedArr);
 
-        xScale.domain(newData.map(function(d) { return d.index; }));
-        yScale.domain([0, d3.max(newData, function(d) { return d.value; })]);
+        xScale.domain(data.x.map(function(d) { return d.index; }));
+        yScale.domain([0, maxValue]);
 
-        graph.selectAll(getD3Selector(selectors.axes.x))
+        graph.selectAll(getD3Selector(sel.axes.x))
             .call(xAxis);
-        graph.selectAll(getD3Selector(selectors.axes.y))
+        graph.selectAll(getD3Selector(sel.axes.y))
             .call(yAxis);
 
-        g.selectAll(".bar")
+        // Create group for overlapped bars
+        let group = g.selectAll(".bar")
             .remove()
             .exit()
-            .data(newData)
-            .enter()
-            .append("rect")
+            .data(vals)
+            .enter();
+
+        // Append x bars
+        group.append("rect")
             .attr("class", "bar")
-            .attr("fill", color)
+            .attr("fill", props.colors.x)
+            .attr("opacity", 0.7)
             .attr("x", function(d) { return xScale(d.index); })
-            .attr("y", function(d) { return yScale(d.value); })
+            .attr("y", function(d) { return yScale(d.x); })
             .attr("width", xScale.bandwidth())
-            .attr("height", function(d) { return graphDim.height - graphDim.margins.bottom  - yScale(d.value); });
+            .attr("height", function(d) { return props.dimensions.height - props.dimensions.margins.bottom  - yScale(d.x); });
+
+        // Append y bars
+        group.append("rect")
+            .attr("class", "bar")
+            .attr("fill", props.colors.y)
+            .attr("opacity", 0.7)
+            .attr("x", function(d) { return xScale(d.index); })
+            .attr("y", function(d) { return yScale(d.y); })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function(d) { return props.dimensions.height - props.dimensions.margins.bottom  - yScale(d.y); });
+
+        // Append z bars
+        group.append("rect")
+            .attr("class", "bar")
+            .attr("fill", props.colors.z)
+            .attr("opacity", 0.7)
+            .attr("x", function(d) { return xScale(d.index); })
+            .attr("y", function(d) { return yScale(d.z); })
+            .attr("width", xScale.bandwidth())
+            .attr("height", function(d) { return props.dimensions.height - props.dimensions.margins.bottom  - yScale(d.z); });
     };
 }
