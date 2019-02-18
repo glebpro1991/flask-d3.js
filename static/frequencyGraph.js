@@ -61,6 +61,14 @@ function FrequencyGraph() {
     }
 
     this.redraw = function(data, color) {
+        // let stack = d3.stack()
+        //     .keys("x", "y", "z")
+        //     .order(d3.stackOrderNone)
+        //     .offset(d3.stackOffsetNone);
+        //
+        // let series = stack(data);
+        // console.log(series);
+
         let newData = data.map(function(d, i) {
             return {index: i, value: Math.sqrt(d.re*d.re + d.im*d.im)} ;
         });

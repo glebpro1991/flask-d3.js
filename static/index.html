@@ -82,13 +82,15 @@
 <script>
     const visualisation = new Visualisation();
     visualisation.init();
-    // visualisation.loadJSON(visualisation.processLocalDataSet);
+    visualisation.loadJSON(visualisation.processLocalDataSet);
 
+    /*
     const socket = io.connect();
     console.log(socket);
     socket.on('news', function (data) {
         visualisation.processNewData(data);
         socket.emit('my other event', { my: 'data' });
     });
+    */
 </script>
 </html>

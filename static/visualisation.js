@@ -4,56 +4,55 @@ function Visualisation() {
         accXAmpl = [], accYAmpl = [], accZAmpl = [],
         gyroXAmpl = [], gyroYAmpl = [], gyroZAmpl = [],
         magXAmpl = [], magYAmpl = [], magZAmpl = [],
+        // Graphs
         gAccTime, gGyroTime, gMagTime,
         gAccXFreq, gAccYFreq, gAccZFreq,
         gGyroXFreq, gGyroYFreq, gGyroZFreq,
         gMagXFreq, gMagYFreq, gMagZFreq,
+        // Other
         qSize = 5000;
 
     this.init = function() {
         createTimeGraphs();
-        createFrequencyGraphs();
+        initTimeGraphs();
+        createFftGraphs();
+        initFftGraphs();
     };
 
     function createTimeGraphs() {
         gAccTime = new TimeGraph();
-        gAccTime.init(selectors.gAccTime);
         gGyroTime = new TimeGraph();
-        gGyroTime.init(selectors.gGyroTime);
         gMagTime = new TimeGraph();
+    }
+
+    function initTimeGraphs() {
+        gAccTime.init(selectors.gAccTime);
+        gGyroTime.init(selectors.gGyroTime);
         gMagTime.init(selectors.gMagTime);
     }
 
-    function createFrequencyGraphs() {
-        // Accelerometer
+    function createFftGraphs() {
         gAccXFreq = new FrequencyGraph();
-        gAccXFreq.init(selectors.gAccXFreq);
-
-        gAccYFreq = new FrequencyGraph();
-        gAccYFreq.init(selectors.gAccYFreq);
-
-        gAccZFreq = new FrequencyGraph();
-        gAccZFreq.init(selectors.gAccZFreq);
-
-        // Gyroscope
+        // gAccYFreq = new FrequencyGraph();
+        // gAccZFreq = new FrequencyGraph();
         gGyroXFreq = new FrequencyGraph();
-        gGyroXFreq.init(selectors.gGyroXFreq);
-
-        gGyroYFreq = new FrequencyGraph();
-        gGyroYFreq.init(selectors.gGyroYFreq);
-
-        gGyroZFreq = new FrequencyGraph();
-        gGyroZFreq.init(selectors.gGyroZFreq);
-
-        // Magnetometer
+        // gGyroYFreq = new FrequencyGraph();
+        // gGyroZFreq = new FrequencyGraph();
         gMagXFreq = new FrequencyGraph();
+        // gMagYFreq = new FrequencyGraph();
+        // gMagZFreq = new FrequencyGraph();
+    }
+
+    function initFftGraphs() {
+        gAccXFreq.init(selectors.gAccXFreq);
+        // gAccYFreq.init(selectors.gAccYFreq);
+        // gAccZFreq.init(selectors.gAccZFreq);
+        gGyroXFreq.init(selectors.gGyroXFreq);
+        // gGyroYFreq.init(selectors.gGyroYFreq);
+        // gGyroZFreq.init(selectors.gGyroZFreq);
         gMagXFreq.init(selectors.gMagXFreq);
-
-        gMagYFreq = new FrequencyGraph();
-        gMagYFreq.init(selectors.gMagYFreq);
-
-        gMagZFreq = new FrequencyGraph();
-        gMagZFreq.init(selectors.gMagZFreq);
+        // gMagYFreq.init(selectors.gMagYFreq);
+        // gMagZFreq.init(selectors.gMagZFreq);
     }
 
     function populateTimeSeries(data) {
@@ -87,46 +86,62 @@ function Visualisation() {
             resetAmplArrays();
         }
 
-        updateView();
+        updateTimeSeriesView();
     }
 
     function resetAmplArrays() {
-        accXAmpl = [];
-        accYAmpl = [];
-        accZAmpl = [];
-        gyroXAmpl = [];
-        gyroYAmpl = [];
-        gyroZAmpl = [];
-        magXAmpl = [];
-        magYAmpl = [];
-        magZAmpl = [];
+        accXAmpl = [], accYAmpl = [], accZAmpl = [];
+        gyroXAmpl = [], gyroYAmpl = [], gyroZAmpl = [];
+        magXAmpl = [], magYAmpl = [], magZAmpl = [];
     }
 
-    function updateView() {
+    function updateTimeSeriesView() {
         redrawTimeAxes(accTimeQ[0].timestamp,
             accTimeQ[accTimeQ.length - 1].timestamp);
-        redrawLines();
+        redrawTimeLines();
     }
 
     function populateFrequencyData() {
         let fft = {
             acc: {
-                x: cfft(accXAmpl.slice(0, 256)),
-                y: cfft(accYAmpl.slice(0, 256)),
-                z: cfft(accZAmpl.slice(0, 256))
+                x: getFft(accXAmpl),
+                y: getFft(accYAmpl),
+                z: getFft(accZAmpl)
             },
             gyro: {
-                x: cfft(gyroXAmpl.slice(0, 256)),
-                y: cfft(gyroYAmpl.slice(0, 256)),
-                z: cfft(gyroZAmpl.slice(0, 256))
+                x: getFft(gyroXAmpl),
+                y: getFft(gyroYAmpl),
+                z: getFft(gyroZAmpl)
             },
             mag: {
-                x: cfft(magXAmpl.slice(0, 256)),
-                y: cfft(magYAmpl.slice(0, 256)),
-                z: cfft(magZAmpl.slice(0, 256))
+                x: getFft(magXAmpl),
+                y: getFft(magYAmpl),
+                z: getFft(magZAmpl)
             }
         };
+
+        // let accx =  getFft(accXAmpl),
+        //     accy = getFft(accYAmpl),
+        //     accz = getFft(accZAmpl),
+        //     gyrox = getFft(gyroXAmpl),
+        //     gyroy = getFft(gyroYAmpl),
+        //     gyroz = getFft(gyroZAmpl),
+        //     magx = getFft(magXAmpl),
+        //     magy = getFft(magYAmpl),
+        //     magz = getFft(magZAmpl);
+        //
+        // let accVals = [], gyroVals = [], magVals = [];
+        // for (let i = 0; i < 255; i++) {
+        //     accVals[i] = {"x": accx[i], "y": accy[i], "z": accz[i]};
+        // }
+
         redrawFreqGraphs(fft);
+    }
+
+    function getFft(data) {
+        let fft = cfft(data.slice(0, 256)); // Trim to pow 2
+        fft.shift(); // Remove 0 Hz component
+        return fft;
     }
 
     function getTimeDataPoint(time, x, y, z) {
@@ -138,7 +153,7 @@ function Visualisation() {
         };
     }
 
-    function redrawLines() {
+    function redrawTimeLines() {
         gAccTime.redrawLines(accTimeQ);
         gGyroTime.redrawLines(gyroTimeQ);
         gMagTime.redrawLines(magTimeQ);
@@ -175,28 +190,18 @@ function Visualisation() {
     }
 
     function redrawFreqGraphs(fft) {
-        fft.acc.x.shift(); // Remove 0 Hz component
         gAccXFreq.redraw(fft.acc.x, "red");
-        fft.acc.y.shift(); // Remove 0 Hz component
-        gAccYFreq.redraw(fft.acc.y, "green");
-        fft.acc.z.shift(); // Remove 0 Hz component
-        gAccZFreq.redraw(fft.acc.z, "blue");
-
-        fft.gyro.x.shift(); // Remove 0 Hz component
-        gGyroXFreq.redraw(fft.gyro.x, "red");
-        fft.gyro.y.shift(); // Remove 0 Hz component
-        gGyroYFreq.redraw(fft.gyro.y, "green");
-        fft.gyro.z.shift(); // Remove 0 Hz component
-        gGyroZFreq.redraw(fft.gyro.z, "blue");
-
-        fft.mag.x.shift(); // Remove 0 Hz component
-        gMagXFreq.redraw(fft.mag.x, "red");
-        fft.mag.y.shift(); // Remove 0 Hz component
-        gMagYFreq.redraw(fft.mag.y, "green");
-        fft.mag.z.shift(); // Remove 0 Hz component
-        gMagZFreq.redraw(fft.mag.z, "blue");
+        // gAccYFreq.redraw(fft.acc.y, "green");
+        // gAccZFreq.redraw(fft.acc.z, "blue");
+        // gGyroXFreq.redraw(fft.gyro.x, "red");
+        // gGyroYFreq.redraw(fft.gyro.y, "green");
+        // gGyroZFreq.redraw(fft.gyro.z, "blue");
+        // gMagXFreq.redraw(fft.mag.x, "red");
+        // gMagYFreq.redraw(fft.mag.y, "green");
+        // gMagZFreq.redraw(fft.mag.z, "blue");
     }
 
+    // Model
     this.processNewData = function(data) {
         populateTimeSeries(data);
     };
