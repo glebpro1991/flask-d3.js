@@ -1,3 +1,4 @@
+
 function FrequencyGraph() {
     let graph, xScale, yScale, g,
         xAxis, yAxis,
@@ -50,24 +51,8 @@ function FrequencyGraph() {
     }
 
     this.redraw = function(data) {
-        // Construct array of objects
-        let vals = [];
-        for (let i = 0; i < 255; i++) {
-            vals[i] = {
-                "index": i,
-                "x": data.x[i].value,
-                "y": data.y[i].value,
-                "z": data.z[i].value};
-        }
-
-        // Combine the arrays to determine maximum value for y axis
-        let combinedArr = data.x.map(a => a.value)
-            .concat(data.y.map(a => a.value))
-            .concat(data.z.map(a => a.value));
-        let maxValue = Math.max.apply(null, combinedArr);
-
-        xScale.domain(data.x.map(function(d) { return d.index; }));
-        yScale.domain([0, maxValue]);
+        xScale.domain(data.data.map(function(d) { return d.index; }));
+        yScale.domain([0, data.maxValue]);
 
         graph.selectAll(getD3Selector(sel.axes.x))
             .call(xAxis);
@@ -78,7 +63,7 @@ function FrequencyGraph() {
         let group = g.selectAll(".bar")
             .remove()
             .exit()
-            .data(vals)
+            .data(data.data)
             .enter();
 
         // Append x bars

@@ -1,14 +1,14 @@
 
 function Visualisation() {
     let accTimeQ = [], gyroTimeQ = [], magTimeQ = [],
-        accXAmpl = [], accYAmpl = [], accZAmpl = [],
-        gyroXAmpl = [], gyroYAmpl = [], gyroZAmpl = [],
-        magXAmpl = [], magYAmpl = [], magZAmpl = [],
         gAccTime, gGyroTime, gMagTime,
         gAccFreq, gGyroFreq, gMagFreq,
         qSize = 5000;
 
+    let amplitudes = {};
+
     this.init = function() {
+        setAmplitudes();
         createTimeGraphs();
         createFftGraphs();
     };
@@ -39,43 +39,61 @@ function Visualisation() {
         gMagFreq.init(selectors.gMagFreq);
     }
 
+    function setAmplitudes() {
+        amplitudes = {
+            acc:{
+                x: [],
+                y: [],
+                z: []
+            },
+            gyro: {
+                x: [],
+                y: [],
+                z: []
+            },
+            mag: {
+                x: [],
+                y: [],
+                z: []
+            }
+        }
+    }
+
     function populateTimeSeries(data) {
         for (let i = 0; i < data.length; i++) {
             let p = data[i];
 
             let accPoint = getTimeDataPoint(p.time, p.accX, p.accY, p.accZ);
-            accXAmpl.push(accPoint.x);
-            accYAmpl.push(accPoint.y);
-            accZAmpl.push(accPoint.z);
             if(accTimeQ.push(accPoint) === qSize)
                 accTimeQ.shift();
 
             let gyroPoint = getTimeDataPoint(p.time, p.gyroX, p.gyroY, p.gyroZ);
-            gyroXAmpl.push(gyroPoint.x);
-            gyroYAmpl.push(gyroPoint.y);
-            gyroZAmpl.push(gyroPoint.z);
             if(gyroTimeQ.push(gyroPoint) === qSize)
                 gyroTimeQ.shift();
 
             let magPoint = getTimeDataPoint(p.time, p.magX, p.magY, p.magZ);
-            magXAmpl.push(magPoint.x);
-            magYAmpl.push(magPoint.y);
-            magZAmpl.push(magPoint.z);
             if(magTimeQ.push(magPoint) === qSize)
                 magTimeQ.shift();
+
+            // Populate amplitude arrays
+            amplitudes.acc.x.push(accPoint.x);
+            amplitudes.acc.y.push(accPoint.y);
+            amplitudes.acc.z.push(accPoint.z);
+
+            amplitudes.gyro.x.push(gyroPoint.x);
+            amplitudes.gyro.y.push(gyroPoint.y);
+            amplitudes.gyro.z.push(gyroPoint.z);
+
+            amplitudes.mag.x.push(magPoint.x);
+            amplitudes.mag.y.push(magPoint.y);
+            amplitudes.mag.z.push(magPoint.z);
         }
 
-        if(accXAmpl.length === 300) {
+        if(amplitudes.acc.x.length === 300) {
             populateFrequencyData();
-            resetAmplArrays();
+            setAmplitudes();
         }
         updateTimeSeriesView();
-    }
-
-    function resetAmplArrays() {
-        accXAmpl = [], accYAmpl = [], accZAmpl = [];
-        gyroXAmpl = [], gyroYAmpl = [], gyroZAmpl = [];
-        magXAmpl = [], magYAmpl = [], magZAmpl = [];
     }
 
     function updateTimeSeriesView() {
@@ -87,31 +105,31 @@ function Visualisation() {
     function populateFrequencyData() {
         let fftData = {
             acc: {
-                x: fft(accXAmpl),
-                y: fft(accYAmpl),
-                z: fft(accZAmpl)
+                x: fft(amplitudes.acc.x),
+                y: fft(amplitudes.acc.y),
+                z: fft(amplitudes.acc.z)
             },
             gyro: {
-                x: fft(gyroXAmpl),
-                y: fft(gyroYAmpl),
-                z: fft(gyroZAmpl)
+                x: fft(amplitudes.gyro.x),
+                y: fft(amplitudes.gyro.y),
+                z: fft(amplitudes.gyro.z)
             },
             mag: {
-                x: fft(magXAmpl),
-                y: fft(magYAmpl),
-                z: fft(magZAmpl)
+                x: fft(amplitudes.mag.x),
+                y: fft(amplitudes.mag.y),
+                z: fft(amplitudes.mag.z)
             }
         };
-        redrawFreqGraphs(fftData);
+        redrawFftGraphs(fftData);
     }
 
     function fft(data) {
-        let fft = cfft(data.slice(0, 256)); // Reduce dataset to pow 2
-        fft.shift(); // Remove 0 Hz component
+        let fft = cfft(data.slice(0, 256)); // Reduce data set to pow 2
+        fft.shift(); // Remove 0 Hz Component
         return fft.map(function(d, i) {
             return {
                 index: i,
-                value: Math.sqrt(d.re*d.re + d.im*d.im) }; // Absolute magnitude
+                value: Math.sqrt(d.re*d.re + d.im*d.im) }; // Absolute Magnitude
         });
     }
 
@@ -124,6 +142,19 @@ function Visualisation() {
         };
     }
 
+    function redrawFftGraphs(fftData) {
+        gAccFreq.redraw(processFftData(fftData.acc));
+        gGyroFreq.redraw(processFftData(fftData.gyro));
+        gMagFreq.redraw(processFftData(fftData.mag));
+    }
+
+    function processFftData(data) {
+        return {
+            data: recombineFftData(data),
+            maxValue: getMax(combineXYZFromMultipleArrays(data))
+        }
+    }
+
     function redrawTimeLines() {
         gAccTime.redrawLines(accTimeQ);
         gGyroTime.redrawLines(gyroTimeQ);
@@ -131,9 +162,9 @@ function Visualisation() {
     }
 
     function redrawTimeAxes(startTime, endTime) {
-        let accData = getArrayProperties(accTimeQ);
-        let gyroData = getArrayProperties(gyroTimeQ);
-        let magData = getArrayProperties(magTimeQ);
+        let accData = combineXYZ(accTimeQ);
+        let gyroData = combineXYZ(gyroTimeQ);
+        let magData = combineXYZ(magTimeQ);
 
         gAccTime.redrawAxes(startTime, endTime,
             getMax(accData),
@@ -146,10 +177,32 @@ function Visualisation() {
             getMin(magData));
     }
 
-    function getArrayProperties(arr) {
+    // Extracts x, y, z values into a single array from an array of objects
+    function combineXYZ(arr) {
         return arr.map(a => a.x)
             .concat(arr.map(a => a.y))
             .concat(arr.map(a => a.z));
+    }
+
+    // Extracts value property from multiple arrays in the object
+    function combineXYZFromMultipleArrays(arr) {
+        return arr.x.map(a => a.value)
+            .concat(arr.y.map(a => a.value))
+            .concat(arr.z.map(a => a.value));
+    }
+
+    function recombineFftData(data) {
+        let values = [];
+
+        for (let i = 0; i < data.x.length; i++) {
+            values[i] = {
+                "index": i,
+                "x": data.x[i].value,
+                "y": data.y[i].value,
+                "z": data.z[i].value
+            };
+        }
+        return values;
     }
 
     function getMax(arr) {
@@ -158,12 +211,6 @@ function Visualisation() {
 
     function getMin(arr) {
         return Math.min.apply(null, arr);
-    }
-
-    function redrawFreqGraphs(data) {
-        gAccFreq.redraw(data.acc);
-        gGyroFreq.redraw(data.gyro);
-        gMagFreq.redraw(data.mag);
     }
 
     // Model

@@ -77,7 +77,9 @@ function TimeGraph() {
         graph.append("svg:g")
             .attr('class', sel.axes.x)
             .attr("transform", "translate(0," + (props.dimensions.height - props.dimensions.margins.bottom) + ")")
+            .text("Label")
             .call(xAxis);
+
         graph.append("svg:g")
             .attr('class', sel.axes.y)
             .attr("transform", "translate(" + (props.dimensions.margins.left) + ",0)")
