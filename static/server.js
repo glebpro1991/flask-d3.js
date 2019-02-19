@@ -33,9 +33,7 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
             if (msg.name === 'notification' && msg.channel === 'table_update') {
                 jsonArr.push(JSON.parse(msg.payload));
                 if(jsonArr.length === 100) {
-                    if(typeof clientSocket !== 'undefined') {
-                        send(jsonArr);
-                    }
+                    send(jsonArr);
                 }
             }
         });
