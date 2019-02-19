@@ -29,7 +29,7 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
         });
 
         // Listen for table updates
-        // client.query("LISTEN table_update");
+        client.query("LISTEN table_update");
 
         // Receive table updates
         client.on('notification', function(msg) {
