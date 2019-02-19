@@ -34,7 +34,7 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
                 jsonArr.push(JSON.parse(msg.payload));
                 if(jsonArr.length === 100) {
                     if(typeof clientSocket !== 'undefined') {
-                        clientSocket.emit('data', jsonArr);
+                        send(jsonArr);
                     }
                 }
             }
@@ -42,3 +42,7 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
         client.query("LISTEN table_update"); // Listen for table updates
     });
 });
+
+function send(jsonArr) {
+    clientSocket.emit('data', jsonArr);
+}
