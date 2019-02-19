@@ -28,9 +28,6 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
             clientSocket = socket;
         });
 
-        // Listen for table updates
-        client.query("LISTEN table_update");
-
         // Receive table updates
         client.on('notification', function(msg) {
             if (msg.name === 'notification' && msg.channel === 'table_update') {
@@ -42,5 +39,6 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
                 }
             }
         });
+        client.query("LISTEN table_update"); // Listen for table updates
     });
 });
