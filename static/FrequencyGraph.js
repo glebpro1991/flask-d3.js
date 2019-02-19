@@ -9,6 +9,7 @@ function FrequencyGraph() {
         initAxes();
         initGraph();
         appendAxes();
+        appendLabels();
     };
 
     function initGraph() {
@@ -46,6 +47,24 @@ function FrequencyGraph() {
             .call(yAxis);
     }
 
+    function appendLabels() {
+        graph.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", props.dimensions.width/2 + 50)
+            .attr("y", props.dimensions.height + 10)
+            .text(sel.labels.xAxis);
+
+        graph.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", 5)
+            .attr("dy", ".75em")
+            .attr("x", -60)
+            .attr("transform", "rotate(-90)")
+            .text(sel.labels.yAxis);
+    }
+
     function getD3Selector(selector) {
         return selector.split(' ').join('.');
     }
@@ -66,34 +85,15 @@ function FrequencyGraph() {
             .data(data.data)
             .enter();
 
-        // Append x bars
-        group.append("rect")
-            .attr("class", "bar")
-            .attr("fill", props.colors.x)
-            .attr("opacity", 0.7)
-            .attr("x", function(d) { return xScale(d.index); })
-            .attr("y", function(d) { return yScale(d.x); })
-            .attr("width", xScale.bandwidth())
-            .attr("height", function(d) { return props.dimensions.height - props.dimensions.margins.bottom  - yScale(d.x); });
-
-        // Append y bars
-        group.append("rect")
-            .attr("class", "bar")
-            .attr("fill", props.colors.y)
-            .attr("opacity", 0.7)
-            .attr("x", function(d) { return xScale(d.index); })
-            .attr("y", function(d) { return yScale(d.y); })
-            .attr("width", xScale.bandwidth())
-            .attr("height", function(d) { return props.dimensions.height - props.dimensions.margins.bottom  - yScale(d.y); });
-
-        // Append z bars
-        group.append("rect")
-            .attr("class", "bar")
-            .attr("fill", props.colors.z)
-            .attr("opacity", 0.7)
-            .attr("x", function(d) { return xScale(d.index); })
-            .attr("y", function(d) { return yScale(d.z); })
-            .attr("width", xScale.bandwidth())
-            .attr("height", function(d) { return props.dimensions.height - props.dimensions.margins.bottom  - yScale(d.z); });
+        ['x', 'y', 'z'].forEach(function(c) {
+            group.append("rect")
+                .attr("class", "bar")
+                .attr("fill", props.colors[c])
+                .attr("opacity", 0.7)
+                .attr("x", function(d) { return xScale(d.index); })
+                .attr("y", function(d) { return yScale(d[c]); })
+                .attr("width", xScale.bandwidth())
+                .attr("height", function(d) { return props.dimensions.height - props.dimensions.margins.bottom  - yScale(d[c]); });
+        });
     };
 }

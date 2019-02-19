@@ -28,6 +28,10 @@ const selectors = {
             x: ' accX line',
             y: ' accY line',
             z: ' accZ line'
+        },
+        labels: {
+            xAxis: 'Time',
+            yAxis: 'Acceleration (m/s^2)'
         }
     },
     gGyroTime: {
@@ -40,6 +44,10 @@ const selectors = {
             x: ' gyroX line',
             y: ' gyroY line',
             z: ' gyroZ line'
+        },
+        labels: {
+            xAxis: 'Time',
+            yAxis: 'Angular velocity (rad/s)'
         }
     },
     gMagTime: {
@@ -52,6 +60,10 @@ const selectors = {
             x: ' magX line',
             y: ' magY line',
             z: ' magZ line'
+        },
+        labels: {
+            xAxis: 'Time',
+            yAxis: 'Magnetic field (μT)'
         }
     },
     gAccFreq: {
@@ -59,6 +71,10 @@ const selectors = {
         axes: {
             x: ' accX x freq axis',
             y: ' accX y freq axis'
+        },
+        labels: {
+            xAxis: 'Frequency (bin)',
+            yAxis: 'Amplitude'
         }
     },
     gGyroFreq: {
@@ -66,6 +82,10 @@ const selectors = {
         axes: {
             x: ' gyro x freq axis',
             y: ' gyro y freq axis'
+        },
+        labels: {
+            xAxis: 'Frequency (bin)',
+            yAxis: 'Amplitude'
         }
     },
     gMagFreq: {
@@ -73,6 +93,10 @@ const selectors = {
         axes: {
             x: ' mag x freq axis',
             y: ' mag y freq axis'
+        },
+        labels: {
+            xAxis: 'Frequency (bin)',
+            yAxis: 'Amplitude'
         }
     }
 };

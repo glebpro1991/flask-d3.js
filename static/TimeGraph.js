@@ -10,6 +10,7 @@ function TimeGraph() {
         initGraph();
         initAxes();
         appendAxes();
+        appendLabels();
         initLineFunctions();
         initLines();
     };
@@ -86,6 +87,24 @@ function TimeGraph() {
             .call(yAxis);
     }
 
+    function appendLabels() {
+        graph.append("text")
+            .attr("class", "x label")
+            .attr("text-anchor", "end")
+            .attr("x", props.dimensions.width/2)
+            .attr("y", props.dimensions.height + 10)
+            .text(sel.labels.xAxis);
+
+        graph.append("text")
+            .attr("class", "y label")
+            .attr("text-anchor", "end")
+            .attr("y", 5)
+            .attr("dy", ".75em")
+            .attr("x", -40)
+            .attr("transform", "rotate(-90)")
+            .text(sel.labels.yAxis);
+    }
+
     this.redrawLines = function(queue) {
         graph.select(getD3Selector(sel.lines.x))
             .attr('d', lineX(queue));
@@ -102,7 +121,7 @@ function TimeGraph() {
         yScale.domain([min - props.dimensions.offset, max + props.dimensions.offset]);
         xAxis = d3.axisBottom()
             .scale(xScale)
-            .tickFormat(d3.timeFormat('%H:%M:%S'))
+            .tickFormat(d3.timeFormat('%d %b - %H:%M:%S'))
             .ticks(5);
         yAxis = d3.axisLeft()
             .scale(yScale)

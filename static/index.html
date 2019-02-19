@@ -7,34 +7,34 @@
 <body>
     <div class="container">
         <!-- Time Domain -->
-        <div class="item accTime">
-            <!--  <h4>Accelerometer Time Domain</h4> -->
+        <div class="accTime">
+            <h4>Accelerometer Time Domain</h4>
             <svg id="accTime"></svg>
         </div>
 
-        <div class="item gyroTime">
-            <!-- <h4>Gyroscope Time Domain</h4> -->
+        <div class="gyroTime">
+            <h4>Gyroscope Time Domain</h4>
             <svg id="gyroTime"></svg>
         </div>
 
-        <div class="item magTime">
-            <!-- <h4>Magnetometer Time Domain</h4> -->
+        <div class="magTime">
+            <h4>Magnetometer Time Domain</h4>
             <svg id="magTime"></svg>
         </div>
 
         <!-- Frequency Domain -->
-        <div class="item accFreq">
-            <!-- <h4>Acc Frequency Domain</h4> -->
+        <div class="accFreq">
+            <h4>Acc Frequency Domain</h4>
             <svg id="accFreq"></svg>
         </div>
 
-        <div class="item gyroFreq">
-            <!-- <h4>Gyro Frequency Domain</h4> -->
+        <div class="gyroFreq">
+            <h4>Gyro Frequency Domain</h4>
             <svg id="gyroFreq"></svg>
         </div>
 
-        <div class="item magFreq">
-            <!-- <h4>Mag Frequency Domain</h4> -->
+        <div class="magFreq">
+            <h4>Mag Frequency Domain</h4>
             <svg id="magFreq"></svg>
         </div>
     </div>
@@ -49,15 +49,13 @@
 <script>
     const visualisation = new Visualisation();
     visualisation.init();
-    visualisation.loadJSON(visualisation.processLocalDataSet);
+    // visualisation.loadJSON(visualisation.processLocalDataSet);
 
-    /*
     const socket = io.connect();
     console.log(socket);
     socket.on('news', function (data) {
         visualisation.processNewData(data);
         socket.emit('my other event', { my: 'data' });
     });
-    */
 </script>
 </html>

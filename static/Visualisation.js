@@ -213,32 +213,32 @@ function Visualisation() {
         return Math.min.apply(null, arr);
     }
 
-    // Model
     this.processNewData = function(data) {
         populateTimeSeries(data);
     };
 
-    this.loadJSON = function(callback) {
-        const xobj = new XMLHttpRequest();
-        xobj.overrideMimeType("application/json");
-        xobj.open('GET', '../result.json', true);
-        xobj.onreadystatechange = function () {
-            if (xobj.readyState === 4 && xobj.status === 200)
-                callback(xobj.responseText);
-        };
-        xobj.send(null);
-    };
-
-    this.processLocalDataSet = function(data) {
-        let batchId = 0;
-        let batchData;
-        const dataSet = JSON.parse(data);
-
-        for (let i = 0; i < 50000; i++) {
-            batchData = dataSet.slice(batchId, batchId += 100);
-            setTimeout(visualisation.processNewData.bind('data', batchData), i*500);
-        }
-    }
+    // Use these to load local data set
+    // this.loadJSON = function(callback) {
+    //     const xobj = new XMLHttpRequest();
+    //     xobj.overrideMimeType("application/json");
+    //     xobj.open('GET', '../result.json', true);
+    //     xobj.onreadystatechange = function () {
+    //         if (xobj.readyState === 4 && xobj.status === 200)
+    //             callback(xobj.responseText);
+    //     };
+    //     xobj.send(null);
+    // };
+    //
+    // this.processLocalDataSet = function(data) {
+    //     let batchId = 0;
+    //     let batchData;
+    //     const dataSet = JSON.parse(data);
+    //
+    //     for (let i = 0; i < 50000; i++) {
+    //         batchData = dataSet.slice(batchId, batchId += 100);
+    //         setTimeout(visualisation.processNewData.bind('data', batchData), i*500);
+    //     }
+    // }
 }
 
 
