@@ -31,16 +31,15 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
         // Receive table updates
         client.on('notification', function(msg) {
             if (msg.name === 'notification' && msg.channel === 'table_update') {
-                jsonArr.push(JSON.parse(msg.payload));
-                if(jsonArr.length === 100) {
-                    send(jsonArr);
+                if(typeof clientSocket !== 'undefined') {
+                    jsonArr.push(JSON.parse(msg.payload));
+                    if(jsonArr.length === 100) {
+                        clientSocket.emit('data', jsonArr);
+                        jsonArr = [];
+                    }
                 }
             }
         });
-        client.query("LISTEN table_update"); // Listen for table updates
+        // client.query("LISTEN table_update"); // Listen for table updates
     });
 });
-
-function send(jsonArr) {
-    clientSocket.emit('data', jsonArr);
-}
