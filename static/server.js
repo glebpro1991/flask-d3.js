@@ -10,43 +10,37 @@ const config = {
     port: 5432
 };
 
-let clientSocket;
-let jsonArr = [];
+let clientSocket, jsonArr = [];
 
 connect().use(serveStatic(__dirname)).listen(8080, async function () {
     console.log('Server running on 8080...');
 
     const pool = new pg.Pool(config);
     pool.connect(function(err, client, done) {
-        if(err) {
+        if(err)
             console.log(err);
-        } else {
-            console.log('connected');
-        }
+        else
+            console.log('Connected to the database');
 
+        // Connect to client script
         io.sockets.on('connection', function (socket) {
-	    console.log('Connection successful!');
+	    console.log('Connected to the client!');
             clientSocket = socket;
         });
 
+        // Listen for table updates
+        // client.query("LISTEN table_update");
+
+        // Receive table updates
         client.on('notification', function(msg) {
             if (msg.name === 'notification' && msg.channel === 'table_update') {
                 jsonArr.push(JSON.parse(msg.payload));
                 if(jsonArr.length === 100) {
-                    send(jsonArr);
-                    jsonArr = [];
+                    if(typeof clientSocket !== 'undefined') {
+                        clientSocket.emit('data', jsonArr);
+                    }
                 }
             }
-
         });
-        client.query("LISTEN table_update");
     });
 });
-
-function send(jsonArr) {
-    console.log('sending');
-    clientSocket.emit('news', jsonArr);
-    clientSocket.on('my other event', function (data) {
-        // console.log('received');
-    });
-}

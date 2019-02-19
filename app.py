@@ -1,5 +1,5 @@
 import datetime
-from flask import Flask, request, jsonify, Response, send_file, make_response
+from flask import Flask, request, jsonify, make_response
 import json, os
 
 from models import db, SensorDataModel

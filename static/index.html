@@ -48,14 +48,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.dev.js"></script>
 <script>
     const visualisation = new Visualisation();
+    const socket = io.connect();
+    console.log(socket);
+
     visualisation.init();
     // visualisation.loadJSON(visualisation.processLocalDataSet);
 
-    const socket = io.connect();
-    console.log(socket);
-    socket.on('news', function (data) {
+    socket.on('data', function (data) {
         visualisation.processNewData(data);
-        socket.emit('my other event', { my: 'data' });
     });
 </script>
 </html>
