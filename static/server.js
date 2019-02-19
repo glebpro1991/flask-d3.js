@@ -40,6 +40,6 @@ connect().use(serveStatic(__dirname)).listen(8080, async function () {
                 }
             }
         });
-        // client.query("LISTEN table_update"); // Listen for table updates
+        client.query("LISTEN table_update"); // Listen for table updates
     });
 });
