@@ -6,7 +6,7 @@ const props = {
             bottom: 20,
             left: 50
         },
-        width: 700,
+        width: 600,
         height: 200,
         offset: 5
     },
