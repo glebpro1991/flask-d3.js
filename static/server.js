@@ -12,8 +12,8 @@ const config = {
 
 let clientSocket, jsonArr = [];
 
-connect().use(serveStatic(__dirname)).listen(8080, async function () {
-    console.log('Server running on 8080...');
+connect().use(serveStatic(__dirname)).listen(8888, async function () {
+    console.log('Server running on 8888...');
 
     const pool = new pg.Pool(config);
     pool.connect(function(err, client, done) {
