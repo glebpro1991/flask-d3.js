@@ -37,7 +37,15 @@ def download():
         j = json.dumps([i.serialize for i in resultset], default=converter)
     fp.write(j)
 
-    return make_response()
+    response = make_response()
+    response.headers['Content-Description'] = 'File Transfer'
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Content-Type'] = 'application/octet-stream'
+    response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
+    response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
+    response.headers['X-Accel-Redirect'] = '/download/result.json'
+
+    return response
 
 
 @app.route('/getLastBatch', methods=['GET'])
@@ -75,16 +83,6 @@ def validate():
         {'errors': errors}
     ]
     return jsonify(results=response)
-
-
-def make_response():
-    response = make_response()
-    response.headers['Content-Description'] = 'File Transfer'
-    response.headers['Cache-Control'] = 'no-cache'
-    response.headers['Content-Type'] = 'application/octet-stream'
-    response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
-    response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
-    response.headers['X-Accel-Redirect'] = '/download/result.json'
 
 
 def converter(o):
