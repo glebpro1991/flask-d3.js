@@ -1,6 +1,9 @@
 import datetime
-from flask import Flask, request, jsonify, make_response
-import json, os
+import json
+import os
+import time
+
+from flask import Flask, jsonify, make_response
 
 from models import db, SensorDataModel
 
@@ -25,20 +28,19 @@ def home():
     return 'Successfully deployed!'
 
 
-@app.route('/save', methods=['POST'])
-def save():
-    req_data = request.get_json()
-    message = saveData(req_data)
-    return jsonify([{"response": message}])
-
-
 @app.route('/download', methods=['GET'])
 def download():
+    tstart = time.time()
     resultset = db.session.query(SensorDataModel).all()
     filedir = '/home/gprohorovs/flask-sensor-data-app/download'
+    # filedir = '/users/Apple/Desktop'
     with open(os.path.join(filedir, 'result.json'), 'w') as fp:
-        j = json.dumps([i.serialize for i in resultset], default=converter, indent=4)
+        j = json.dumps([i.serialize for i in resultset], default=converter)
         fp.write(j)
+    # return 'Operation took: ' \
+    #        + str(time.time() - tstart) + \
+    #        ' seconds.'
+
     response = make_response()
     response.headers['Content-Description'] = 'File Transfer'
     response.headers['Cache-Control'] = 'no-cache'
@@ -46,8 +48,7 @@ def download():
     response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
     response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
     response.headers['X-Accel-Redirect'] = '/download/result.json'
-    # return send_file('/tmp/result.json', as_attachment=True);
-    return response;
+    return response
 
 
 @app.route('/getLastBatch', methods=['GET'])
@@ -56,21 +57,36 @@ def getLastBatch():
     return jsonify([i.serialize for i in resultset.order_by(SensorDataModel.sampleId.desc()).limit(100).all()])
 
 
-def saveData(data):
-    try:
-        db.session.add_all(
-            [
-                SensorDataModel(record)
-                for record in data
-            ]
-        )
-        db.session.commit()
-        return "success"
-    except Exception as e:
-        db.session.rollback()
-        return str(e)
-    finally:
-        db.session.close()
+@app.route('/count', methods=['GET'])
+def count():
+    numRows = db.session.query(SensorDataModel).count()
+    return 'The total number of rows in the table is ' + str(numRows)
+
+
+@app.route('/validate', methods=['GET'])
+def validate():
+    tstart = time.time()
+    errors = []
+    counter = db.session.query(SensorDataModel.sampleId).order_by(SensorDataModel.sampleId.asc()).first()[0]
+
+    for sample in db.session.query(SensorDataModel.sampleId).order_by(SensorDataModel.sampleId.asc()).all():
+        sampleId = int(sample[0])
+
+        if counter != sampleId:
+            difference = (sampleId - counter)
+            counter = counter + difference
+            errors.append('Sequence broken on sample ID '
+                          + str(sampleId)
+                          + '. ' + str(difference)
+                          + ' rows are missing!')
+        counter = counter + 1
+
+    response = [
+        {'time taken': str(time.time() - tstart)},
+        {'errors': errors}
+    ]
+
+    return jsonify(results=response)
 
 
 def converter(o):
