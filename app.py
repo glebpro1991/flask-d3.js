@@ -30,25 +30,14 @@ def home():
 
 @app.route('/download', methods=['GET'])
 def download():
-    tstart = time.time()
-    resultset = db.session.query(SensorDataModel).all()
+    resultset = db.session.query(SensorDataModel).limit(1000).all()
     filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-    # filedir = '/users/Apple/Desktop'
+
     with open(os.path.join(filedir, 'result.json'), 'w') as fp:
         j = json.dumps([i.serialize for i in resultset], default=converter)
-        fp.write(j)
-    # return 'Operation took: ' \
-    #        + str(time.time() - tstart) + \
-    #        ' seconds.'
+    fp.write(j)
 
-    response = make_response()
-    response.headers['Content-Description'] = 'File Transfer'
-    response.headers['Cache-Control'] = 'no-cache'
-    response.headers['Content-Type'] = 'application/octet-stream'
-    response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
-    response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
-    response.headers['X-Accel-Redirect'] = '/download/result.json'
-    return response
+    return make_response()
 
 
 @app.route('/getLastBatch', methods=['GET'])
@@ -85,8 +74,17 @@ def validate():
         {'time taken': str(time.time() - tstart)},
         {'errors': errors}
     ]
-
     return jsonify(results=response)
+
+
+def make_response():
+    response = make_response()
+    response.headers['Content-Description'] = 'File Transfer'
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Content-Type'] = 'application/octet-stream'
+    response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
+    response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
+    response.headers['X-Accel-Redirect'] = '/download/result.json'
 
 
 def converter(o):
