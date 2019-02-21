@@ -35,7 +35,7 @@ def download():
 
     with open(os.path.join(filedir, 'result.json'), 'w') as fp:
         j = json.dumps([i.serialize for i in resultset], default=converter)
-    fp.write(j)
+        fp.write(j)
 
     response = make_response()
     response.headers['Content-Description'] = 'File Transfer'
