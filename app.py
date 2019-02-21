@@ -81,7 +81,8 @@ def converter(o):
     if isinstance(o, datetime.datetime):
         return o.__str__()
 
-def create_response:
+
+def create_response():
     response = make_response()
     response.headers['Content-Description'] = 'File Transfer'
     response.headers['Cache-Control'] = 'no-cache'
