@@ -34,18 +34,10 @@ def download():
     filedir = '/home/gprohorovs/flask-sensor-data-app/download'
 
     with open(os.path.join(filedir, 'result.json'), 'w') as fp:
-        j = json.dumps([i.serialize for i in resultset], default=converter)
+        j = json.dumps([i.serialize for i in resultset], default=converter, indent=4)
         fp.write(j)
 
-    response = make_response()
-    response.headers['Content-Description'] = 'File Transfer'
-    response.headers['Cache-Control'] = 'no-cache'
-    response.headers['Content-Type'] = 'application/octet-stream'
-    response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
-    response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
-    response.headers['X-Accel-Redirect'] = '/download/result.json'
-
-    return response
+    return create_response()
 
 
 @app.route('/getLastBatch', methods=['GET'])
@@ -88,6 +80,15 @@ def validate():
 def converter(o):
     if isinstance(o, datetime.datetime):
         return o.__str__()
+
+def create_response:
+    response = make_response()
+    response.headers['Content-Description'] = 'File Transfer'
+    response.headers['Cache-Control'] = 'no-cache'
+    response.headers['Content-Type'] = 'application/octet-stream'
+    response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
+    response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
+    response.headers['X-Accel-Redirect'] = '/download/result.json'
 
 
 if __name__ == '__main__':
