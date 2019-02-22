@@ -41,7 +41,7 @@ def get(start, end):
             {"error": "Invalid timestamps"}
         ]
         return response
-    elif end - start > 7200:
+    elif end - start > 10800:
         response = [
             {"error": "Time period is too large"}
         ]
