@@ -31,7 +31,9 @@ def home():
 @app.route('/getLastBatch', methods=['GET'])
 def getLastBatch():
     results = db.session.query(SensorDataModel)
-    return jsonify([i.serialize for i in results.order_by(SensorDataModel.sampleId.desc()).limit(100).all()])
+    return jsonify([i.serialize for i in results
+                   .order_by(SensorDataModel.sampleId.desc())
+                   .limit(100).all()])
 
 
 @app.route('/get/<int:start>/<int:end>', methods=['GET'])
@@ -40,12 +42,12 @@ def get(start, end):
         response = [
             {"error": "Invalid timestamps"}
         ]
-        return response
+        return jsonify(results=response)
     elif end - start > 10800:
         response = [
             {"error": "Time period is too large"}
         ]
-        return response
+        return jsonify(results=response)
     else:
         tstart = datetime.datetime.fromtimestamp(start)
         tend = datetime.datetime.fromtimestamp(end)
@@ -74,9 +76,13 @@ def count():
 def validate():
     tstart = time.time()
     errors = []
-    counter = db.session.query(SensorDataModel.sampleId).order_by(SensorDataModel.sampleId.asc()).first()[0]
+    counter = db.session.query(SensorDataModel.sampleId)\
+        .order_by(SensorDataModel.sampleId.asc())\
+        .first()[0]
 
-    for sample in db.session.query(SensorDataModel.sampleId).order_by(SensorDataModel.sampleId.asc()).all():
+    for sample in db.session.query(SensorDataModel.sampleId)\
+            .order_by(SensorDataModel.sampleId.asc())\
+            .all():
         sampleId = int(sample[0])
 
         if counter != sampleId:
