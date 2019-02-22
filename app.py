@@ -28,22 +28,10 @@ def home():
     return 'Successfully deployed!'
 
 
-@app.route('/download', methods=['GET'])
-def download():
-    resultset = db.session.query(SensorDataModel).limit(1000).all()
-    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-
-    with open(os.path.join(filedir, 'result.json'), 'w') as fp:
-        j = json.dumps([i.serialize for i in resultset], default=converter, indent=4)
-        fp.write(j)
-
-    return create_response()
-
-
 @app.route('/getLastBatch', methods=['GET'])
 def getLastBatch():
-    resultset = db.session.query(SensorDataModel)
-    return jsonify([i.serialize for i in resultset.order_by(SensorDataModel.sampleId.desc()).limit(100).all()])
+    results = db.session.query(SensorDataModel)
+    return jsonify([i.serialize for i in results.order_by(SensorDataModel.sampleId.desc()).limit(100).all()])
 
 
 @app.route('/get/<int:start>/<int:end>', methods=['GET'])
@@ -63,8 +51,8 @@ def get(start, end):
         tend = datetime.datetime.fromtimestamp(end)
         filedir = '/home/gprohorovs/flask-sensor-data-app/download'
 
-        resultset = db.session.query(SensorDataModel)
-        rows = [i.serialize for i in resultset
+        results = db.session.query(SensorDataModel)
+        rows = [i.serialize for i in results
             .order_by(SensorDataModel.sampleId.asc())
             .filter(SensorDataModel.time >= tstart)
             .filter(SensorDataModel.time <= tend)
