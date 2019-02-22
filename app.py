@@ -28,7 +28,7 @@ def home():
     return 'Successfully deployed!'
 
 
-@app.route('/getLast', methods=['GET'])
+@app.route('/api/getLast', methods=['GET'])
 def getLast():
     results = db.session.query(SensorDataModel)
     return jsonify([i.serialize for i in results
@@ -36,7 +36,7 @@ def getLast():
                    .limit(100).all()])
 
 
-@app.route('/get/<int:start>/<int:end>', methods=['GET'])
+@app.route('/api/get/<int:start>/<int:end>', methods=['GET'])
 def get(start, end):
     if end - start <= 0:
         return jsonify(results=[{"error": "Invalid timestamps"}])
@@ -60,20 +60,20 @@ def get(start, end):
         return create_response()
 
 
-@app.route('/count', methods=['GET'])
+@app.route('/api/count', methods=['GET'])
 def count():
     numRows = db.session.query(SensorDataModel).count()
     return 'The total number of rows in the table is ' + str(numRows)
 
 
-@app.route('/deleteAll')
+@app.route('/api/deleteAll')
 def deleteAll():
     numRows = db.session.query(SensorDataModel).delete()
     db.session.commit()
     return 'The total number of rows deleted ' + str(numRows)
 
 
-@app.route('/validate', methods=['GET'])
+@app.route('/api/validate', methods=['GET'])
 def validate():
     tstart = time.time()
     errors = []
