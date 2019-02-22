@@ -77,9 +77,15 @@ def deleteAll():
 def validate():
     tstart = time.time()
     errors = []
-    counter = db.session.query(SensorDataModel.sampleId) \
+
+    first = db.session.query(SensorDataModel.sampleId) \
         .order_by(SensorDataModel.sampleId.asc()) \
-        .first()[0]
+        .first()
+
+    if first is None:
+        return 'No records in the table'
+    else:
+        counter = first[0]
 
     for sample in db.session.query(SensorDataModel.sampleId) \
             .order_by(SensorDataModel.sampleId.asc()) \
@@ -99,7 +105,7 @@ def validate():
         {'time taken': str(time.time() - tstart)},
         {'errors': errors}
     ]
-    return jsonify(results=response)
+    return jsonify(results=response, indent=4)
 
 
 def converter(o):
