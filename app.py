@@ -46,6 +46,36 @@ def getLastBatch():
     return jsonify([i.serialize for i in resultset.order_by(SensorDataModel.sampleId.desc()).limit(100).all()])
 
 
+@app.route('/get/<int:start>/<int:end>', methods=['GET'])
+def get(start, end):
+    if end - start <= 0:
+        response = [
+            {"error": "Invalid timestamps"}
+        ]
+        return response
+    elif end - start > 7200:
+        response = [
+            {"error": "Time period is too large"}
+        ]
+        return response
+    else:
+        tstart = datetime.datetime.fromtimestamp(start)
+        tend = datetime.datetime.fromtimestamp(end)
+        filedir = '/home/gprohorovs/flask-sensor-data-app/download'
+
+        resultset = db.session.query(SensorDataModel)
+        rows = [i.serialize for i in resultset
+            .order_by(SensorDataModel.sampleId.asc())
+            .filter(SensorDataModel.time >= tstart)
+            .filter(SensorDataModel.time <= tend)
+            .all()]
+
+        with open(os.path.join(filedir, 'result.json'), 'w') as fp:
+            j = json.dumps(rows, default=converter, indent=4)
+            fp.write(j)
+        return create_response()
+
+
 @app.route('/count', methods=['GET'])
 def count():
     numRows = db.session.query(SensorDataModel).count()
