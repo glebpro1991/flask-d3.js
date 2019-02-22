@@ -28,8 +28,8 @@ def home():
     return 'Successfully deployed!'
 
 
-@app.route('/getLastBatch', methods=['GET'])
-def getLastBatch():
+@app.route('/getLast', methods=['GET'])
+def getLast():
     results = db.session.query(SensorDataModel)
     return jsonify([i.serialize for i in results
                    .order_by(SensorDataModel.sampleId.desc())
@@ -39,15 +39,9 @@ def getLastBatch():
 @app.route('/get/<int:start>/<int:end>', methods=['GET'])
 def get(start, end):
     if end - start <= 0:
-        response = [
-            {"error": "Invalid timestamps"}
-        ]
-        return jsonify(results=response)
+        return jsonify(results=[{"error": "Invalid timestamps"}])
     elif end - start > 10800:
-        response = [
-            {"error": "Time period is too large"}
-        ]
-        return jsonify(results=response)
+        return jsonify(results=[{"error": "Time period is too large"}])
     else:
         tstart = datetime.datetime.fromtimestamp(start)
         tend = datetime.datetime.fromtimestamp(end)
@@ -72,16 +66,23 @@ def count():
     return 'The total number of rows in the table is ' + str(numRows)
 
 
+@app.route('/deleteAll')
+def deleteAll():
+    numRows = db.session.query(SensorDataModel).delete()
+    db.session.commit()
+    return 'The total number of rows deleted ' + str(numRows)
+
+
 @app.route('/validate', methods=['GET'])
 def validate():
     tstart = time.time()
     errors = []
-    counter = db.session.query(SensorDataModel.sampleId)\
-        .order_by(SensorDataModel.sampleId.asc())\
+    counter = db.session.query(SensorDataModel.sampleId) \
+        .order_by(SensorDataModel.sampleId.asc()) \
         .first()[0]
 
-    for sample in db.session.query(SensorDataModel.sampleId)\
-            .order_by(SensorDataModel.sampleId.asc())\
+    for sample in db.session.query(SensorDataModel.sampleId) \
+            .order_by(SensorDataModel.sampleId.asc()) \
             .all():
         sampleId = int(sample[0])
 
