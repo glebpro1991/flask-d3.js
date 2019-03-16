@@ -13,6 +13,7 @@ function TimeGraph() {
         appendLabels();
         initLineFunctions();
         initLines();
+        appendLegends();
     };
 
     function initGraph() {
@@ -89,13 +90,15 @@ function TimeGraph() {
 
     function appendLabels() {
         graph.append("text")
+            .style("font-size", "15px")
             .attr("class", "x label")
             .attr("text-anchor", "end")
-            .attr("x", props.dimensions.width/2)
-            .attr("y", props.dimensions.height + 10)
+            .attr("x", props.dimensions.width/2 + 50)
+            .attr("y", props.dimensions.height + 20)
             .text(sel.labels.xAxis);
 
         graph.append("text")
+            .style("font-size", "15px")
             .attr("class", "y label")
             .attr("text-anchor", "end")
             .attr("y", 5)
@@ -103,6 +106,22 @@ function TimeGraph() {
             .attr("x", -40)
             .attr("transform", "rotate(-90)")
             .text(sel.labels.yAxis);
+    }
+
+    function appendLegends() {
+        let lineLegend = graph.selectAll(".lineLegend").data(props.sensorAxes)
+        .enter().append("svg:g")
+        .attr("class", "lineLegend")
+        .attr("transform", function (d, i) {
+            return "translate(" + (props.dimensions.width - 60) + "," + (i * 20) + ")";
+        });
+
+        lineLegend.append("text").text(function (d) {return d.name;})
+            .attr("transform", "translate(15,9)");
+
+        lineLegend.append("rect")
+            .attr("fill", function (d) {return d.colour; })
+            .attr("width", 10).attr("height", 2);
     }
 
     this.redrawLines = function(queue) {

@@ -7,9 +7,20 @@ const props = {
             left: 50
         },
         width: 600,
+        frequencyWidth: 800,
         height: 200,
         offset: 5
     },
+    sensorAxes: [{
+        name: 'x',
+        colour: 'red'
+    },{
+        name: 'y',
+        colour: 'blue'
+    },{
+        name: 'z',
+        colour: 'green'
+    }],
     colors: {
         x: "red",
         y: "green",
@@ -32,7 +43,8 @@ const selectors = {
         labels: {
             xAxis: 'Time',
             yAxis: 'Acceleration (m/s^2)'
-        }
+        },
+        scale: 40
     },
     gGyroTime: {
         graph: '#gyroTime',
@@ -48,7 +60,8 @@ const selectors = {
         labels: {
             xAxis: 'Time',
             yAxis: 'Angular velocity (rad/s)'
-        }
+        },
+        scale: 30
     },
     gMagTime: {
         graph: '#magTime',
@@ -64,7 +77,8 @@ const selectors = {
         labels: {
             xAxis: 'Time',
             yAxis: 'Magnetic field (μT)'
-        }
+        },
+        scale: 200
     },
     gAccFreq: {
         graph: '#accFreq',
@@ -74,7 +88,7 @@ const selectors = {
         },
         labels: {
             xAxis: 'Frequency (bin)',
-            yAxis: 'Amplitude'
+            yAxis: 'Amplitude (m/s^2)'
         }
     },
     gGyroFreq: {
@@ -85,7 +99,7 @@ const selectors = {
         },
         labels: {
             xAxis: 'Frequency (bin)',
-            yAxis: 'Amplitude'
+            yAxis: 'Amplitude (rad/s)'
         }
     },
     gMagFreq: {
@@ -96,7 +110,7 @@ const selectors = {
         },
         labels: {
             xAxis: 'Frequency (bin)',
-            yAxis: 'Amplitude'
+            yAxis: 'Amplitude (μT)'
         }
     }
 };

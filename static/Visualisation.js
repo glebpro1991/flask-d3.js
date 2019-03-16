@@ -5,7 +5,7 @@ function Visualisation() {
         gAccFreq, gGyroFreq, gMagFreq,
         qSize = 5000;
 
-    let amplitudes = {};
+    let ampls = {};
 
     this.init = function() {
         setAmplitudes();
@@ -40,22 +40,10 @@ function Visualisation() {
     }
 
     function setAmplitudes() {
-        amplitudes = {
-            acc:{
-                x: [],
-                y: [],
-                z: []
-            },
-            gyro: {
-                x: [],
-                y: [],
-                z: []
-            },
-            mag: {
-                x: [],
-                y: [],
-                z: []
-            }
+        ampls = {
+            acc:{x: [], y: [], z: []},
+            gyro: {x: [], y: [], z: []},
+            mag: {x: [], y: [], z: []}
         }
     }
 
@@ -76,20 +64,20 @@ function Visualisation() {
                 magTimeQ.shift();
 
             // Populate amplitude arrays
-            amplitudes.acc.x.push(accPoint.x);
-            amplitudes.acc.y.push(accPoint.y);
-            amplitudes.acc.z.push(accPoint.z);
+            ampls.acc.x.push(accPoint.x);
+            ampls.acc.y.push(accPoint.y);
+            ampls.acc.z.push(accPoint.z);
 
-            amplitudes.gyro.x.push(gyroPoint.x);
-            amplitudes.gyro.y.push(gyroPoint.y);
-            amplitudes.gyro.z.push(gyroPoint.z);
+            ampls.gyro.x.push(gyroPoint.x);
+            ampls.gyro.y.push(gyroPoint.y);
+            ampls.gyro.z.push(gyroPoint.z);
 
-            amplitudes.mag.x.push(magPoint.x);
-            amplitudes.mag.y.push(magPoint.y);
-            amplitudes.mag.z.push(magPoint.z);
+            ampls.mag.x.push(magPoint.x);
+            ampls.mag.y.push(magPoint.y);
+            ampls.mag.z.push(magPoint.z);
         }
 
-        if(amplitudes.acc.x.length === 300) {
+        if(ampls.acc.x.length === 300) {
             populateFrequencyData();
             setAmplitudes();
         }
@@ -105,19 +93,19 @@ function Visualisation() {
     function populateFrequencyData() {
         let fftData = {
             acc: {
-                x: fft(amplitudes.acc.x),
-                y: fft(amplitudes.acc.y),
-                z: fft(amplitudes.acc.z)
+                x: fft(ampls.acc.x),
+                y: fft(ampls.acc.y),
+                z: fft(ampls.acc.z)
             },
             gyro: {
-                x: fft(amplitudes.gyro.x),
-                y: fft(amplitudes.gyro.y),
-                z: fft(amplitudes.gyro.z)
+                x: fft(ampls.gyro.x),
+                y: fft(ampls.gyro.y),
+                z: fft(ampls.gyro.z)
             },
             mag: {
-                x: fft(amplitudes.mag.x),
-                y: fft(amplitudes.mag.y),
-                z: fft(amplitudes.mag.z)
+                x: fft(ampls.mag.x),
+                y: fft(ampls.mag.y),
+                z: fft(ampls.mag.z)
             }
         };
         redrawFftGraphs(fftData);
@@ -150,7 +138,7 @@ function Visualisation() {
 
     function processFftData(data) {
         return {
-            data: recombineFftData(data),
+            data: recombineFftData(data).splice(0, 128),
             maxValue: getMax(combineXYZFromMultipleArrays(data))
         }
     }
@@ -162,19 +150,26 @@ function Visualisation() {
     }
 
     function redrawTimeAxes(startTime, endTime) {
-        let accData = combineXYZ(accTimeQ);
-        let gyroData = combineXYZ(gyroTimeQ);
-        let magData = combineXYZ(magTimeQ);
+        // Uncomment these lines to scale axes dynamically
+        // let accData = combineXYZ(accTimeQ);
+        // let gyroData = combineXYZ(gyroTimeQ);
+        // let magData = combineXYZ(magTimeQ);
 
         gAccTime.redrawAxes(startTime, endTime,
-            getMax(accData),
-            getMin(accData));
+            selectors.gAccTime.scale,
+            -selectors.gAccTime.scale);
+            // getMax(accData), // Uncomment these lines to scale axes dynamically
+            // getMin(accData));
         gGyroTime.redrawAxes(startTime, endTime,
-            getMax(gyroData),
-            getMin(gyroData));
+            selectors.gGyroTime.scale,
+            -selectors.gGyroTime.scale);
+            // getMax(gyroData), // Uncomment these lines to scale axes dynamically
+            // getMin(gyroData));
         gMagTime.redrawAxes(startTime, endTime,
-            getMax(magData),
-            getMin(magData));
+            selectors.gMagTime.scale,
+            -selectors.gMagTime.scale);
+            // getMax(magData), // Uncomment these lines to scale axes dynamically
+            // getMin(magData));
     }
 
     // Extracts x, y, z values into a single array from an array of objects
@@ -209,15 +204,16 @@ function Visualisation() {
         return Math.max.apply(null, arr);
     }
 
-    function getMin(arr) {
-        return Math.min.apply(null, arr);
-    }
+    // Uncomment these lines to scale axes dynamically
+    // function getMin(arr) {
+    //     return Math.min.apply(null, arr);
+    // }
 
     this.processNewData = function(data) {
         populateTimeSeries(data);
     };
 
-    // Use these to load local data set
+    // Uncomment these lines to load local data set
     // this.loadJSON = function(callback) {
     //     const xobj = new XMLHttpRequest();
     //     xobj.overrideMimeType("application/json");
