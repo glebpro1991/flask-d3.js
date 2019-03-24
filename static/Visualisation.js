@@ -3,7 +3,7 @@ function Visualisation() {
     let accTimeQ = [], gyroTimeQ = [], magTimeQ = [],
         gAccTime, gGyroTime, gMagTime,
         gAccFreq, gGyroFreq, gMagFreq,
-        qSize = 5000;
+        qSize = 1000;
 
     let ampls = {};
 

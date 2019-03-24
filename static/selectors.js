@@ -23,8 +23,8 @@ const props = {
     }],
     colors: {
         x: "red",
-        y: "green",
-        z: "blue"
+        y: "blue",
+        z: "green"
     }
 };
 
