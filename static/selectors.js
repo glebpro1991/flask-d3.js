@@ -78,7 +78,7 @@ const selectors = {
             xAxis: 'Time',
             yAxis: 'Magnetic field (μT)'
         },
-        scale: 200
+        scale: 100
     },
     gAccFreq: {
         graph: '#accFreq',
