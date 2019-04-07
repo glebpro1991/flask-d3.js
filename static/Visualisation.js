@@ -3,7 +3,7 @@ function Visualisation() {
     let accTimeQ = [], gyroTimeQ = [], magTimeQ = [],
         gAccTime, gGyroTime, gMagTime,
         gAccFreq, gGyroFreq, gMagFreq,
-        qSize = 1000;
+        qSize = 5000;
 
     let ampls = {};
 
@@ -50,6 +50,11 @@ function Visualisation() {
     function populateTimeSeries(data) {
         for (let i = 0; i < data.length; i++) {
             let p = data[i];
+
+            // Ignore historic data
+            if(Date.now() - p.time > 10000) {
+                return;
+            }
 
             let accPoint = getTimeDataPoint(p.time, p.accX, p.accY, p.accZ);
             if(accTimeQ.push(accPoint) === qSize)
@@ -212,29 +217,6 @@ function Visualisation() {
     this.processNewData = function(data) {
         populateTimeSeries(data);
     };
-
-    // Uncomment these lines to load local data set
-    // this.loadJSON = function(callback) {
-    //     const xobj = new XMLHttpRequest();
-    //     xobj.overrideMimeType("application/json");
-    //     xobj.open('GET', '../result.json', true);
-    //     xobj.onreadystatechange = function () {
-    //         if (xobj.readyState === 4 && xobj.status === 200)
-    //             callback(xobj.responseText);
-    //     };
-    //     xobj.send(null);
-    // };
-    //
-    // this.processLocalDataSet = function(data) {
-    //     let batchId = 0;
-    //     let batchData;
-    //     const dataSet = JSON.parse(data);
-    //
-    //     for (let i = 0; i < 50000; i++) {
-    //         batchData = dataSet.slice(batchId, batchId += 100);
-    //         setTimeout(visualisation.processNewData.bind('data', batchData), i*500);
-    //     }
-    // }
 }
 
 
