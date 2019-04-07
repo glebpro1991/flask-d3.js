@@ -90,7 +90,7 @@ function TimeGraph() {
 
     function appendLabels() {
         graph.append("text")
-            .style("font-size", "15px")
+            .style("font-size", ".70em")
             .attr("class", "x label")
             .attr("text-anchor", "end")
             .attr("x", props.dimensions.width/2 + 50)
@@ -98,7 +98,7 @@ function TimeGraph() {
             .text(sel.labels.xAxis);
 
         graph.append("text")
-            .style("font-size", "15px")
+            .style("font-size", ".70em")
             .attr("class", "y label")
             .attr("text-anchor", "end")
             .attr("y", 5)

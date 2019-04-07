@@ -50,7 +50,7 @@ function FrequencyGraph() {
 
     function appendLabels() {
         graph.append("text")
-            .style("font-size", "15px")
+            .style("font-size", ".70em")
             .attr("class", "x label")
             .attr("text-anchor", "end")
             .attr("x", props.dimensions.frequencyWidth/2 + 50)
@@ -58,7 +58,7 @@ function FrequencyGraph() {
             .text(sel.labels.xAxis);
 
         graph.append("text")
-            .style("font-size", "15px")
+            .style("font-size", ".70em")
             .attr("class", "y label")
             .attr("text-anchor", "end")
             .attr("y", 5)
