@@ -64,7 +64,7 @@
                         e.preventDefault();
 
                         $.ajax({
-                            url: "/api/count/" + sessionId,
+                            url: "/api/get/" + sessionId,
                             type: 'GET',
                             dataType: 'jsonp',
                             success: function(res) {
