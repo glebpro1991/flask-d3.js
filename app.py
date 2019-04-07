@@ -3,7 +3,7 @@ import json
 import os
 import time
 
-from flask import Flask, jsonify, make_response
+from flask import Flask, jsonify, make_response, render_template
 
 from models import db, SensorDataModel
 
@@ -47,7 +47,7 @@ def get_by_time(start, end, sid):
         tend = datetime.datetime.fromtimestamp(end)
         filedir = '/home/gprohorovs/flask-sensor-data-app/download'
 
-        results = db.session.query(SensorDataModel)\
+        results = db.session.query(SensorDataModel) \
             .filter(SensorDataModel.sessionId == sid)
         rows = [i.serialize for i in results
             .order_by(SensorDataModel.sampleId.asc())
@@ -71,9 +71,9 @@ def get(sid):
         return jsonify(results=[{"error": "Result set is too large!"}])
     else:
         rows = [i.serialize for i in results
-        .order_by(SensorDataModel.sampleId.asc())
-        .filter(SensorDataModel.sessionId == sid)
-        .all()]
+            .order_by(SensorDataModel.sampleId.asc())
+            .filter(SensorDataModel.sessionId == sid)
+            .all()]
         with open(os.path.join(filedir, 'result.json'), 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
@@ -124,6 +124,11 @@ def validate(sid):
             {'time taken': str(time.time() - tstart)},
             {'errors': validate_dataset(first[0], sid)}]
         return jsonify(results=response)
+
+
+@app.route('/download', methods=['GET'])
+def download_page():
+    return render_template('download.html')
 
 
 def converter(o):
