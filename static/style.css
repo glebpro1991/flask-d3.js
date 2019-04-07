@@ -18,10 +18,6 @@ h4 {
 
 .container {
     display: grid;
-    margin-top: 2vh;
-    margin-bottom: 2vh;
-    margin-left: 4vw;
-    margin-right: 2vw;
 }
 
 .accTime {
