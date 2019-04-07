@@ -52,7 +52,7 @@ function Visualisation() {
             let p = data[i];
 
             // Ignore historic data
-            if(Date.now() - p.time > 10000) {
+            if(Date.now() - p.time > 300000) {
                 return;
             }
 
