@@ -7,7 +7,7 @@ const props = {
             left: 50
         },
         width: 200,
-        frequencyWidth: 400,
+        frequencyWidth: 200,
         height: 100,
         offset: 5
     },
