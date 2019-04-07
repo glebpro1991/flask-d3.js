@@ -29,15 +29,15 @@ def home():
 
 
 @app.route('/api/getLast', methods=['GET'])
-def getLast():
+def get_last():
     results = db.session.query(SensorDataModel)
     return jsonify([i.serialize for i in results
                    .order_by(SensorDataModel.sampleId.desc())
                    .limit(100).all()])
 
 
-@app.route('/api/get/<int:start>/<int:end>', methods=['GET'])
-def get_all(start, end):
+@app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
+def get_by_time(start, end, sid):
     if end - start <= 0:
         return jsonify(results=[{"error": "Invalid timestamps"}])
     elif end - start > 10800:
@@ -47,7 +47,8 @@ def get_all(start, end):
         tend = datetime.datetime.fromtimestamp(end)
         filedir = '/home/gprohorovs/flask-sensor-data-app/download'
 
-        results = db.session.query(SensorDataModel)
+        results = db.session.query(SensorDataModel)\
+            .filter(SensorDataModel.sessionId == sid)
         rows = [i.serialize for i in results
             .order_by(SensorDataModel.sampleId.asc())
             .filter(SensorDataModel.time >= tstart)
@@ -60,25 +61,19 @@ def get_all(start, end):
         return create_response()
 
 
-@app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
-def get(start, end, sid):
-    if end - start <= 0:
-        return jsonify(results=[{"error": "Invalid timestamps"}])
-    elif end - start > 10800:
-        return jsonify(results=[{"error": "Time period is too large"}])
+@app.route('/api/get/<int:sid>', methods=['GET'])
+def get(sid):
+    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
+
+    results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
+
+    if results.count() > 1000000:
+        return jsonify(results=[{"error": "Result set is too large!"}])
     else:
-        tstart = datetime.datetime.fromtimestamp(start)
-        tend = datetime.datetime.fromtimestamp(end)
-        filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-
-        results = db.session.query(SensorDataModel)
         rows = [i.serialize for i in results
-            .order_by(SensorDataModel.sampleId.asc())
-            .filter(SensorDataModel.sessionId == sid)
-            .filter(SensorDataModel.time >= tstart)
-            .filter(SensorDataModel.time <= tend)
-            .all()]
-
+        .order_by(SensorDataModel.sampleId.asc())
+        .filter(SensorDataModel.sessionId == sid)
+        .all()]
         with open(os.path.join(filedir, 'result.json'), 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
@@ -87,14 +82,14 @@ def get(start, end, sid):
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
 def count(sid):
-    numRows = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid).count()
-    return 'Number of records for session ' + str(sid) + ': ' + str(numRows)
+    num_rows = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid).count()
+    return 'Number of records for session ' + str(sid) + ': ' + str(num_rows)
 
 
 @app.route('/api/countAll', methods=['GET'])
 def count_all():
-    numRows = db.session.query(SensorDataModel).count()
-    return 'The total number of rows: ' + str(numRows)
+    num_rows = db.session.query(SensorDataModel).count()
+    return 'The total number of rows: ' + str(num_rows)
 
 
 @app.route('/api/delete/<int:sid>')
