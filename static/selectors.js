@@ -6,9 +6,9 @@ const props = {
             bottom: 20,
             left: 50
         },
-        width: 600,
-        frequencyWidth: 600,
-        height: 200,
+        width: 400,
+        frequencyWidth: 400,
+        height: 150,
         offset: 5
     },
     sensorAxes: [{
