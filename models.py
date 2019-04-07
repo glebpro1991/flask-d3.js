@@ -53,10 +53,11 @@ class SensorDataModel(BaseModel):
     magX = db.Column(db.Float)
     magY = db.Column(db.Float)
     magZ = db.Column(db.Float)
+    sessionId = db.Column(db.BigInteger)
 
     def __init__(self, data, *args):
         super().__init__(*args)
-        self.sampleId = data.get('sampleId')
+        self.sampleIdx = data.get('sampleId')
         self.time = datetime.datetime.fromtimestamp(int(data.get('time')) / 1e3)
         self.accX = data.get('accX')
         self.accY = data.get('accY')
@@ -67,3 +68,4 @@ class SensorDataModel(BaseModel):
         self.magX = data.get('magX')
         self.magY = data.get('magY')
         self.magZ = data.get('magZ')
+        self.sessionId = data.get('sessionId')
