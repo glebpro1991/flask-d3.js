@@ -64,11 +64,14 @@
                         e.preventDefault();
 
                         $.ajax({
-                            url: "http://localhost/api/count/" + sessionId,
+                            url: "/api/count/" + sessionId,
                             type: 'GET',
                             dataType: 'jsonp',
                             success: function(res) {
                                 console.log(res);
+                            },
+                            error: function(err) {
+                                console.log(err);
                             }
                         });
                     });
