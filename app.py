@@ -3,7 +3,7 @@ import json
 import os
 import time
 
-from flask import Flask, jsonify, make_response, render_template
+from flask import Flask, jsonify, make_response, render_template, send_from_directory
 
 from models import db, SensorDataModel, SessionModel
 
@@ -110,7 +110,7 @@ def download_data_by_session_id(sid):
         with open(os.path.join(filedir, 'result.json'), 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
-    return app.send_static_file(os.path.join(filedir, 'result.json'))
+    return send_from_directory(os.path.join(filedir, 'result.json'))
 
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
