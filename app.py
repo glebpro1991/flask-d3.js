@@ -5,7 +5,7 @@ import time
 
 from flask import Flask, jsonify, make_response, render_template
 
-from models import db, SensorDataModel
+from models import db, SensorDataModel, SessionModel
 
 app = Flask(__name__)
 
@@ -44,7 +44,7 @@ def show_about_page():
 
 
 @app.route('/api/getLast', methods=['GET'])
-def get_last():
+def get_data_last():
     results = db.session.query(SensorDataModel)
     return jsonify([i.serialize for i in results
                    .order_by(SensorDataModel.sampleId.desc())
@@ -52,7 +52,7 @@ def get_last():
 
 
 @app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
-def get_by_time(start, end, sid):
+def get_data_by_time(start, end, sid):
     if end - start <= 0:
         return jsonify(results=[{"error": "Invalid timestamps"}])
     elif end - start > 10800:
@@ -77,7 +77,7 @@ def get_by_time(start, end, sid):
 
 
 @app.route('/api/get/<int:sid>', methods=['GET'])
-def get(sid):
+def get_data_by_session_id(sid):
     filedir = '/home/gprohorovs/flask-sensor-data-app/download'
 
     results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
@@ -96,7 +96,7 @@ def get(sid):
 
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
-def count(sid):
+def count_by_session_id(sid):
     num_rows = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid).count()
     return 'Number of records for session ' + str(sid) + ': ' + str(num_rows)
 
@@ -108,7 +108,7 @@ def count_all():
 
 
 @app.route('/api/delete/<int:sid>')
-def delete(sid):
+def delete_by_session_id(sid):
     num_rows = db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid) \
         .delete()
@@ -124,7 +124,7 @@ def delete_all():
 
 
 @app.route('/api/validate/<int:sid>', methods=['GET'])
-def validate(sid):
+def validate_by_session_id(sid):
     tstart = time.time()
 
     first = db.session.query(SensorDataModel.sampleId) \
@@ -139,6 +139,14 @@ def validate(sid):
             {'time taken': str(time.time() - tstart)},
             {'errors': validate_dataset(first[0], sid)}]
         return jsonify(results=response)
+
+
+@app.route('/api/getSessions')
+def get_sessions():
+    results = db.session.query(SessionModel)
+    return jsonify([i.serialize for i in results
+                   .order_by(SensorDataModel.sessionId.asc())
+                   .limit(100).all()])
 
 
 def converter(o):

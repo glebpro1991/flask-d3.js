@@ -69,3 +69,20 @@ class SensorDataModel(BaseModel):
         self.magY = data.get('magY')
         self.magZ = data.get('magZ')
         self.sessionId = data.get('sessionId')
+
+
+class SessionModel(BaseModel):
+    __tablename__ = 'session'
+    sessionId = db.Column(db.BigInteger, primary_key=True, unique=True)
+    userId = db.Column(db.String)
+    deviceId = db.Column(db.String)
+    startTime = db.Column(db.DateTime)
+    stopTime = db.Column(db.DateTime)
+
+    def __init__(self, data, *args):
+        super().__init__(*args)
+        self.sessionId = data.get('sessionId')
+        self.userId = data.get('userId')
+        self.deviceId = data.get('deviceId')
+        self.startTime = datetime.datetime.fromtimestamp(int(data.get('startTime')) / 1e3)
+        self.stopTime = datetime.datetime.fromtimestamp(int(data.get('stopTime')) / 1e3)
