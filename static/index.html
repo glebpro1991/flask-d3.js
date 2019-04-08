@@ -7,60 +7,61 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Console</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="#">Visualisation <span class="sr-only">(current)</span></a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/download">Download</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/">About</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Console</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="#">Visualisation <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sessions">Sessions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/download">Download</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="graphs">
+            <div class="accTime">
+                <p class="title">Accelerometer Time Domain</p>
+                <svg id="accTime"></svg>
+            </div>
+
+            <div class="gyroTime">
+                <p class="title">Gyroscope Time Domain</p>
+                <svg id="gyroTime"></svg>
+            </div>
+
+            <div class="magTime">
+                <p class="title">Magnetometer Time Domain</p>
+                <svg id="magTime"></svg>
+            </div>
+
+            <div class="accFreq">
+                <p class="title">Accelerometer Frequency Domain</p>
+                <svg id="accFreq"></svg>
+            </div>
+
+            <div class="gyroFreq">
+                <p class="title">Gyroscope Frequency Domain</p>
+                <svg id="gyroFreq"></svg>
+            </div>
+
+            <div class="magFreq">
+                <p class="title">Magnetometer Frequency Domain</p>
+                <svg id="magFreq"></svg>
+            </div>
+        </div>
     </div>
-</nav>
-
-<div class="continer">
-    <div class="graphs">
-        <div class="accTime">
-            <p class="title">Accelerometer Time Domain</p>
-            <svg id="accTime"></svg>
-        </div>
-
-        <div class="gyroTime">
-            <p class="title">Gyroscope Time Domain</p>
-            <svg id="gyroTime"></svg>
-        </div>
-
-        <div class="magTime">
-            <p class="title">Magnetometer Time Domain</p>
-            <svg id="magTime"></svg>
-        </div>
-
-        <div class="accFreq">
-            <p class="title">Accelerometer Frequency Domain</p>
-            <svg id="accFreq"></svg>
-        </div>
-
-        <div class="gyroFreq">
-            <p class="title">Gyroscope Frequency Domain</p>
-            <svg id="gyroFreq"></svg>
-        </div>
-
-        <div class="magFreq">
-            <p class="title">Magnetometer Frequency Domain</p>
-            <svg id="magFreq"></svg>
-        </div>
-    </div>
-</div>
-
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>

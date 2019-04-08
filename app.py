@@ -28,6 +28,21 @@ def home():
     return 'Successfully deployed!'
 
 
+@app.route('/download', methods=['GET'])
+def show_download_page():
+    return render_template('download.html')
+
+
+@app.route('/sessions', methods=['GET'])
+def show_session_page():
+    return render_template('sessions.html')
+
+
+@app.route('/about', methods=['GET'])
+def show_about_page():
+    return render_template('about.html')
+
+
 @app.route('/api/getLast', methods=['GET'])
 def get_last():
     results = db.session.query(SensorDataModel)
@@ -124,11 +139,6 @@ def validate(sid):
             {'time taken': str(time.time() - tstart)},
             {'errors': validate_dataset(first[0], sid)}]
         return jsonify(results=response)
-
-
-@app.route('/download', methods=['GET'])
-def download_page():
-    return render_template('download.html')
 
 
 def converter(o):
