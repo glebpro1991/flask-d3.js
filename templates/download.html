@@ -69,6 +69,7 @@
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
                 <div id="download"></div>
+                <p id="statusmsg"></p>
             </div>
             <script type="text/javascript">
                 $(document).ready(function() {
@@ -79,18 +80,33 @@
                         console.log(sessionId +  ": from " + from + " to " + to);
                         e.preventDefault();
 
-                        $.ajax({
-                            url: "/api/download/" + sessionId,
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function(res) {
-                                let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(res));
-                                $('<a href="data:' + data + '" download="data.json">download JSON</a>').appendTo('#download');
-                            },
-                            error: function(err) {
-                                $("#download").text(err);
+                        if(sessionId == null || sessionId === "") {
+                            $("#statusmsg").text('No session ID provided!');
+                        } else {
+                            let url = "/api/download/";
+                            if (from == null || isNaN(from) || to == null || isNaN(to)) {
+                                $("#statusmsg").text('Retrieving data for session: ' + sessionId);
+                                url = url + sessionId;
+                            } else {
+                                $("#statusmsg").text('Retrieving data for session: '
+                                    + sessionId + ' from ' + from + ' to ' + to);
+                                url = url + '/' + from + '/' + to + '/' + sessionId;
                             }
-                        });
+
+                            $.ajax({
+                                url: url,
+                                type: 'GET',
+                                dataType: 'json',
+                                success: function(res) {
+                                    let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(res));
+                                    $('<a href="data:' + data + '" download="data.json">download JSON</a>').appendTo('#download');
+                                },
+                                error: function(err) {
+                                    console.log(err);
+                                    $("#statusmsg").text(err);
+                                }
+                            });
+                        }
                     });
                 });
 
