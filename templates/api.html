@@ -8,35 +8,123 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
-    <a class="navbar-brand" href="#">Console</a>
-    <button class="navbar-toggler" type="button"
-            data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item active">
-                <a class="nav-link" href="../static/index.html">Visualisation</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/sessions">Sessions</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/download">Download</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/api">API</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/about">About</a>
-            </li>
-        </ul>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">Console</a>
+        <button class="navbar-toggler" type="button"
+                data-toggle="collapse"
+                data-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="../static/index.html">Visualisation</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/sessions">Sessions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/download">Download</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/api">API</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/about">About</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <h2>API Reference</h2>
+        </div>
+        <div class="row">
+            <div class='col-sm-12'>
+                <table class="table" >
+                    <thead>
+                    <tr>
+                        <th scope="col">Endpoint</th>
+                        <th scope="col">Parameters</th>
+                        <th scope="col">Description</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>/api/get/int:sid</th>
+                            <td>
+                                <ul>
+                                    <li>sid - user session ID</li>
+                                </ul>
+                            </td>
+                            <td>Retrieves a subset of sensor data as JSON serialised file based on user session ID</td>
+                        </tr>
+                        <tr>
+                            <th>/api/get/int:start/int:end/int:sid</th>
+                            <td>
+                                <ul>
+                                    <li>start - start time of data subset as UNIX timestamp in milliseconds</li>
+                                    <li>end - end time of data subset as UNIX timestamp in in milliseconds</li>
+                                    <li>sid - user session ID</li>
+                                </ul>
+                            </td>
+                            <td>Retrieves a subset of sensor data as JSON serialised file
+                                based on provided user session ID and from/to timestamps</td>
+                        </tr>
+                        <tr>
+                            <th>/api/count/int:sid</th>
+                            <td>
+                                <ul>
+                                    <li>sid - user session ID</li>
+                                </ul>
+                            </td>
+                            <td>Returns the number of sensor samples collected over a session</td>
+                        </tr>
+                        <tr>
+                            <th>/api/countAll</th>
+                            <td>None</td>
+                            <td>Returns the total number of sensor samples in the cloud storage</td>
+                        </tr>
+                        <tr>
+                            <th>/api/delete/int:sid</th>
+                            <td>
+                                <ul>
+                                    <li>sid - user session ID</li>
+                                </ul>
+                            </td>
+                            <td>Deletes the sensor samples that belong to user session</td>
+                        </tr>
+                        <tr>
+                            <th>/api/deleteAll</th>
+                            <td>None</td>
+                            <td>Deletes the entire dataset</td>
+                        </tr>
+                        <tr>
+                            <th>/api/validate/int:sid</th>
+                            <td>
+                                <ul>
+                                    <li>sid - user session ID</li>
+                                </ul>
+                            </td>
+                            <td>Checks the consistency of subset of data that belongs to a session</td>
+                        </tr>
+                        <tr>
+                            <th>/api/getSessions</th>
+                            <td>None</td>
+                            <td>Returns all sessions</td>
+                        </tr>
+                        <tr>
+                            <th>/api/getLast</th>
+                            <td>None</td>
+                            <td>Returns the contents of the most recent sensor batch</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
-</nav>
 </body>
 </html>
