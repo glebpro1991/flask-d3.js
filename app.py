@@ -145,7 +145,7 @@ def validate_by_session_id(sid):
 def get_sessions():
     results = db.session.query(SessionModel)
     return jsonify([i.serialize for i in results
-                   .order_by(SensorDataModel.sessionId.asc())
+                   .order_by(SessionModel.sessionId.asc())
                    .limit(100).all()])
 
 

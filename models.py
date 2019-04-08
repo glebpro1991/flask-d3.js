@@ -23,22 +23,6 @@ class BaseModel(db.Model):
             for column, value in self._to_dict().items()
         }
 
-    @property
-    def serialize(self):
-        return {
-            'sampleId': self.sampleId,
-            'time': self.time,
-            'accX': self.accX,
-            'accY': self.accY,
-            'accZ': self.accZ,
-            'gyroX': self.gyroX,
-            'gyroY': self.gyroY,
-            'gyroZ': self.gyroZ,
-            'magX': self.magX,
-            'magY': self.magY,
-            'magZ': self.magZ
-        }
-
 
 class SensorDataModel(BaseModel):
     __tablename__ = 'data'
@@ -70,6 +54,22 @@ class SensorDataModel(BaseModel):
         self.magZ = data.get('magZ')
         self.sessionId = data.get('sessionId')
 
+    @property
+    def serialize(self):
+        return {
+            'sampleId': self.sampleId,
+            'time': self.time,
+            'accX': self.accX,
+            'accY': self.accY,
+            'accZ': self.accZ,
+            'gyroX': self.gyroX,
+            'gyroY': self.gyroY,
+            'gyroZ': self.gyroZ,
+            'magX': self.magX,
+            'magY': self.magY,
+            'magZ': self.magZ
+        }
+
 
 class SessionModel(BaseModel):
     __tablename__ = 'session'
@@ -86,3 +86,13 @@ class SessionModel(BaseModel):
         self.deviceId = data.get('deviceId')
         self.startTime = datetime.datetime.fromtimestamp(int(data.get('startTime')) / 1e3)
         self.stopTime = datetime.datetime.fromtimestamp(int(data.get('stopTime')) / 1e3)
+
+    @property
+    def serialize(self):
+        return {
+            'sessionId': self.sessionId,
+            'userId': self.userId,
+            'deviceId': self.deviceId,
+            'startTime': self.startTime,
+            'stopTime': self.stopTime
+        }
