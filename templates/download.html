@@ -68,6 +68,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
+                <div id="download"></div>
             </div>
             <script type="text/javascript">
                 $(document).ready(function() {
@@ -81,12 +82,13 @@
                         $.ajax({
                             url: "/api/download/" + sessionId,
                             type: 'GET',
-                            dataType: 'jsonp',
+                            dataType: 'json',
                             success: function(res) {
-                                console.log('Success!');
+                                let data = "text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(res));
+                                $('<a href="data:' + data + '" download="data.json">download JSON</a>').appendTo('#download');
                             },
                             error: function(err) {
-                                console.log(err);
+                                $("#download").text(err);
                             }
                         });
                     });

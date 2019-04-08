@@ -98,7 +98,7 @@ def get_data_by_session_id(sid):
 def download_data_by_session_id(sid):
     root_dir = os.path.dirname(os.getcwd())
     filename = 'result.json'
-    path = os.path.join(root_dir, 'static', filename)
+    path = os.path.join(root_dir, 'flask-sensor-data-app','static', filename)
 
     results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
     if results.count() > 1000000:
@@ -112,7 +112,7 @@ def download_data_by_session_id(sid):
         with open(path, 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
-    return send_from_directory(path, filename)
+    return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
