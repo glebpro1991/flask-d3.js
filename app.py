@@ -110,7 +110,7 @@ def download_data_by_session_id(sid):
         with open(os.path.join(filedir, 'result.json'), 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
-    return send_from_directory(os.path.join(filedir, 'result.json'))
+    return send_from_directory(os.path.join(filedir, 'result.json'), str(sid))
 
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
