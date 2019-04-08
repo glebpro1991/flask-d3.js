@@ -96,9 +96,11 @@ def get_data_by_session_id(sid):
 
 @app.route('/api/download/<int:sid>', methods=['GET'])
 def download_data_by_session_id(sid):
-    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-    results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
+    root_dir = os.path.dirname(os.getcwd())
+    filename = 'result.json'
+    path = os.path.join(root_dir, 'static', filename)
 
+    results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
     if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
     else:
@@ -107,10 +109,10 @@ def download_data_by_session_id(sid):
             .filter(SensorDataModel.sessionId == sid)
             .all()]
 
-        with open(os.path.join(filedir, 'result.json'), 'w') as fp:
+        with open(path, 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
-    return send_from_directory(os.path.join(filedir, 'result.json'), str(sid))
+    return send_from_directory(path, filename)
 
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
