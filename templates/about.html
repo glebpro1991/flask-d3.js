@@ -30,6 +30,9 @@
                     <a class="nav-link" href="/download">Download</a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="/api">API</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="/about">About</a>
                 </li>
             </ul>
@@ -37,7 +40,79 @@
     </nav>
     <div class="container">
         <div class="row">
-            <h3>Sensor Data Collection Framework</h3>
+            <h2>Sensor Data Collection Framework</h2>
+        </div>
+        <div class="row">
+            <h3>1. Description</h3>
+            <p>Android-based platform for collection of sensor data from a consumer smartwatch.
+                The developed prototype is capable of performing real-time cloud synchronisation of data acquired from the
+                three onboard sensors at the sampling rate of 100 Hz. The distinguishing feature of the
+                framework lies in its ability to handle wireless connectivity loss in order to preserve temporal data integrity
+                while maintaining uninterrupted operation.</p>
+        </div>
+        <div class="row">
+            <h3>2. System Architecture</h3>
+            <p>The system consists of an Android smartwatch, tablet, and server.
+                The wearable utilises Bluetooth Low Energy (BLE) connection to the handheld for data interchange.
+                The handheld maintains a connection to the cloud server over the Internet.
+            </p>
+            <p>
+                The wearable application acquires data from the hardware sensors - accelerometer, gyroscope, magentometer -
+                and transmits sensor data to the companion mobile device.
+                The mobile application visualises sensor values and relays data to the cloud storage over HTTP.
+                The web application on the dedicated server stores data to the database and provides API for data retrieval.
+            </p>
+            <p>The system ensures temporal continuity of data through offline synchronisation via temporary data storage buffers.
+                In case of connectivity loss between the nodes, the data is buffered
+                and synchronised when the connection is re-established. The mechanism ensures that network downtime,
+                unstable connection, and data loss during transmission do not result
+                in data loss and hence affect data consistency.</p>
+        </div>
+        <div class="row">
+            <h3>3. Technologies</h3>
+        </div>
+            <h4>Client-Side</h4>
+            <ul>
+                <li>Android</li>
+                <li>Android Wear</li>
+            </ul>
+            <h4>Server-Side</h4>
+            <ul>
+                <li>PostgreSQL</li>
+                <li>SymmetricDS</li>
+                <li>Python Flask</li>
+                <li>Gunicorn</li>
+                <li>Nginx</li>
+                <li>Node.js</li>
+                <li>D3.js</li>
+                <li>Socket.io</li>
+                <li>jQuery</li>
+                <li>Bootstrap</li>
+            </ul>
+        <div class="row">
+            <h4>4. Requirements</h4>
+            <ul>
+                <li>Android Wear 2.0 Smartwatch</li>
+                <li>Android Mobile Device</li>
+                <p>The devices must be compatible for pairing and data exhange over Bluetooth.</p>
+                <li>SymmetricDS Andorid Service</li>
+                <p>The JAR files can be downloaded from:
+                    https://sourceforge.net/projects/symmetricds/files/symmetricds/symmetricds-3.8/symmetric-android-3.8.42.zip/download</p>
+            </ul>
+        </div>
+        <div class="row">
+            <h4>5. Installation</h4>
+        </div>
+            <ol>
+                <li>Pair the smartwatch with the handheld.</li>
+                <li>Enable Developer Options and activate debugging mode on both devices.</li>
+                <li>Clone Git repository from https://github.com/cidcom/gleb-android-imu-platform</li>
+                <li>Download SymmetricDS dependency files and import into the mobile module under /libs directory.</li>
+                <li>Build and install the wearable and mobile apps on the respective devices</li>
+                <li>Start data retreival from the main screen of the mobile device.</li>
+            </ol>
+        <div class="row">
+            <h4>6. Known Issues</h4>
         </div>
     </div>
 </body>

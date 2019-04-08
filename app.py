@@ -38,6 +38,11 @@ def show_session_page():
     return render_template('sessions.html')
 
 
+@app.route('/api', methods=['GET'])
+def show_api_page():
+    return render_template('api.html')
+
+
 @app.route('/about', methods=['GET'])
 def show_about_page():
     return render_template('about.html')
@@ -98,7 +103,7 @@ def get_data_by_session_id(sid):
 def download_data_by_session_id(sid):
     root_dir = os.path.dirname(os.getcwd())
     filename = 'result.json'
-    path = os.path.join(root_dir, 'flask-sensor-data-app','static', filename)
+    path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
 
     results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
     if results.count() > 1000000:
