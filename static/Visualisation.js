@@ -52,7 +52,9 @@ function Visualisation() {
             let p = data[i];
 
             // Ignore historic data
-            if(Date.now() - p.time > 300000) {
+            let timeDifference = Date.now()/1000 - p.time;
+            console.log('Time difference ' + timeDifference);
+            if(timeDifference > 300000) {
                 return;
             }
 
