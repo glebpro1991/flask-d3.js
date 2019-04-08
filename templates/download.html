@@ -40,6 +40,9 @@
     </nav>
     <div class="container">
         <div class="row">
+            <h3>Download Data</h3>
+        </div>
+        <div class="row">
             <div class='col-sm-6'>
                 <form id="dataform">
                     <div class="form-group">
@@ -90,7 +93,7 @@
                             } else {
                                 $("#statusmsg").text('Retrieving data for session: '
                                     + sessionId + ' from ' + from + ' to ' + to);
-                                url = url + '/' + from + '/' + to + '/' + sessionId;
+                                url = url + from + '/' + to + '/' + sessionId;
                             }
 
                             $.ajax({
