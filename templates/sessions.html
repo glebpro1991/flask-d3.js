@@ -34,8 +34,52 @@
         </div>
     </nav>
     <div class="container">
-        <p>Sessions</p>
+        <div class="row">
+            <div class='col-sm-12'>
+                <table class="table" >
+                    <thead>
+                    <tr>
+                        <th scope="col">Session ID</th>
+                        <th scope="col">User ID</th>
+                        <th scope="col">Device ID</th>
+                        <th scope="col">Start Time</th>
+                        <th scope="col">End Time</th>
+                        <th scope="col">Count</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                    </thead>
+                    <tbody id="sessions">
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $.ajax({
+            url: "/api/getSessions",
+            type: 'GET',
+            dataType: 'json',
+            success: function(res) {
+                console.log(res);
+                for(let i = 0; i < res.length; i++) {
+                    let session = res[i];
+                    $("#sessions").append('<tr>' +
+                        '<th scope="row">' + session.sessionId + '</th>' +
+                        '<td>' + session.userId +'</td>' +
+                        '<td>' + session.deviceId +'</td>' +
+                        '<td>' + session.startTime +'</td>' +
+                        '<td>' + session.stopTime +'</td>' +
+                        '</tr>');
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    });
+</script>
 </html>
