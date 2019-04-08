@@ -83,13 +83,13 @@ def get(sid):
 @app.route('/api/count/<int:sid>', methods=['GET'])
 def count(sid):
     num_rows = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid).count()
-    return jsonify(results=[{'result': 'Number of records for session ' + str(sid) + ': ' + str(num_rows)}])
+    return 'Number of records for session ' + str(sid) + ': ' + str(num_rows)
 
 
 @app.route('/api/countAll', methods=['GET'])
 def count_all():
     num_rows = db.session.query(SensorDataModel).count()
-    return jsonify(results=[{'The total number of rows: ' + str(num_rows)}])
+    return 'The total number of rows: ' + str(num_rows)
 
 
 @app.route('/api/delete/<int:sid>')
@@ -98,14 +98,14 @@ def delete(sid):
         .filter(SensorDataModel.sessionId == sid) \
         .delete()
     db.session.commit()
-    return jsonify(results=[{'Number of records for session ' + str(sid) + ' deleted: ' + str(num_rows)}])
+    return 'Number of records for session ' + str(sid) + ' deleted: ' + str(num_rows)
 
 
 @app.route('/api/deleteAll')
 def delete_all():
     num_rows = db.session.query(SensorDataModel).delete()
     db.session.commit()
-    return jsonify(results=[{'The total number of rows deleted ' + str(num_rows)}])
+    return 'The total number of rows deleted ' + str(num_rows)
 
 
 @app.route('/api/validate/<int:sid>', methods=['GET'])
