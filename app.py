@@ -79,7 +79,6 @@ def get_data_by_time(start, end, sid):
 @app.route('/api/get/<int:sid>', methods=['GET'])
 def get_data_by_session_id(sid):
     filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-
     results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
 
     if results.count() > 1000000:
@@ -93,6 +92,25 @@ def get_data_by_session_id(sid):
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
         return create_response()
+
+
+@app.route('/api/download/<int:sid>', methods=['GET'])
+def download_data_by_session_id(sid):
+    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
+    results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
+
+    if results.count() > 1000000:
+        return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
+    else:
+        rows = [i.serialize for i in results
+            .order_by(SensorDataModel.sampleId.asc())
+            .filter(SensorDataModel.sessionId == sid)
+            .all()]
+
+        with open(os.path.join(filedir, 'result.json'), 'w') as fp:
+            j = json.dumps(rows, default=converter, indent=4)
+            fp.write(j)
+    return app.send_static_file(os.path.join(filedir, 'result.json'))
 
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
@@ -145,7 +163,7 @@ def validate_by_session_id(sid):
 def get_sessions():
     results = db.session.query(SessionModel)
     return jsonify([i.serialize for i in results
-                   .order_by(SessionModel.sessionId.asc())
+                   .order_by(SessionModel.sessionId.desc())
                    .limit(100).all()])
 
 
@@ -161,13 +179,13 @@ def validate_dataset(counter, sid):
             .filter(SensorDataModel.sessionId == sid) \
             .order_by(SensorDataModel.sampleId.asc()) \
             .all():
-        sampleId = int(sample[0])
+        sample_id = int(sample[0])
 
-        if counter != sampleId:
-            difference = (sampleId - counter)
+        if counter != sample_id:
+            difference = (sample_id - counter)
             counter = counter + difference
             errors.append('Sequence broken on sample ID '
-                          + str(sampleId)
+                          + str(sample_id)
                           + '. ' + str(difference)
                           + ' rows are missing!')
         counter = counter + 1
