@@ -81,7 +81,7 @@
                         $.ajax({
                             url: "/api/download/" + sessionId,
                             type: 'GET',
-                            dataType: 'json',
+                            dataType: 'jsonp',
                             success: function(res) {
                                 console.log('Success!');
                             },
