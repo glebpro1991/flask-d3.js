@@ -52,8 +52,9 @@ function Visualisation() {
             let p = data[i];
 
             // Ignore historic data
-            let timeDifference = Date.now()/1000 - p.time;
-            console.log('Time difference ' + timeDifference);
+            let timeDifference = Date.now()/1000 - Date.parse(p.time);
+            console.log('Time: ' + Date.parse(p.time));
+            console.log('Time difference: ' + timeDifference);
             if(timeDifference > 300000) {
                 return;
             }
