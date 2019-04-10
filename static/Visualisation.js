@@ -55,7 +55,7 @@ function Visualisation() {
             console.log(p);
             if(Date.now() - Date.parse(p.time) > 300000) {
                 document.getElementById("syncId").innerText = p.sampleId;
-                document.getElementById("syncId").innerText = p.time;
+                document.getElementById("syncTime").innerText = p.time;
                 return;
             }
 
