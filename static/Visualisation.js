@@ -52,9 +52,10 @@ function Visualisation() {
             let p = data[i];
 
             // Ignore Historic Data
-            console.log(p.time);
+            console.log(p);
             if(Date.now() - Date.parse(p.time) > 300000) {
-                document.getElementById("sync").innerText = p.time;
+                document.getElementById("syncId").innerText = p.sampleId;
+                document.getElementById("syncId").innerText = p.time;
                 return;
             }
 
