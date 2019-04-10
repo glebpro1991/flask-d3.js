@@ -52,6 +52,7 @@ function Visualisation() {
             let p = data[i];
 
             // Ignore Historic Data
+            console.log(p.time);
             if(Date.now() - Date.parse(p.time) > 300000) {
                 document.getElementById("sync").innerText = p.time;
                 return;
