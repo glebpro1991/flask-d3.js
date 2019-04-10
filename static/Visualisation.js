@@ -53,6 +53,7 @@ function Visualisation() {
 
             // Ignore Historic Data
             if(Date.now() - Date.parse(p.time) > 300000) {
+                document.getElementById("sync").innerText = p.time;
                 return;
             }
 
@@ -68,18 +69,7 @@ function Visualisation() {
             if(magTimeQ.push(magPoint) === qSize)
                 magTimeQ.shift();
 
-            // Populate amplitude arrays
-            ampls.acc.x.push(accPoint.x);
-            ampls.acc.y.push(accPoint.y);
-            ampls.acc.z.push(accPoint.z);
-
-            ampls.gyro.x.push(gyroPoint.x);
-            ampls.gyro.y.push(gyroPoint.y);
-            ampls.gyro.z.push(gyroPoint.z);
-
-            ampls.mag.x.push(magPoint.x);
-            ampls.mag.y.push(magPoint.y);
-            ampls.mag.z.push(magPoint.z);
+            populateAmplitudes(accPoint, gyroPoint, magPoint);
         }
 
         if(ampls.acc.x.length === 300) {
@@ -87,6 +77,18 @@ function Visualisation() {
             setAmplitudes();
         }
         updateTimeSeriesView();
+    }
+
+    function populateAmplitudes(point) {
+        ampls.acc.x.push(accPoint.x);
+        ampls.acc.y.push(accPoint.y);
+        ampls.acc.z.push(accPoint.z);
+        ampls.gyro.x.push(gyroPoint.x);
+        ampls.gyro.y.push(gyroPoint.y);
+        ampls.gyro.z.push(gyroPoint.z);
+        ampls.mag.x.push(magPoint.x);
+        ampls.mag.y.push(magPoint.y);
+        ampls.mag.z.push(magPoint.z);
     }
 
     function updateTimeSeriesView() {
