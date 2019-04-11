@@ -75,6 +75,7 @@ def download_data_by_session_id(sid):
     root_dir = os.path.dirname(os.getcwd())
     filename = 'result.json'
     path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
+
     results = retrieve_by_session_id(sid)
     if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
@@ -88,6 +89,8 @@ def download_data_by_session_id(sid):
 
 @app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
 def get_data_by_time(start, end, sid):
+    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
+
     if end - start <= 0:
         return jsonify(results=[{"error": "Invalid timestamps"}])
     elif end - start > 10800:
@@ -95,12 +98,7 @@ def get_data_by_time(start, end, sid):
     else:
         tstart = datetime.datetime.fromtimestamp(start)
         tend = datetime.datetime.fromtimestamp(end)
-        filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-
-        results = db.session.query(SensorDataModel)\
-            .filter(SensorDataModel.sessionId == sid)\
-            .filter(SensorDataModel.time >= tstart)\
-            .filter(SensorDataModel.time <= tend)
+        results = retrieve_by_time(tstart, tend, sid)
         rows = serialise_dataset(results)
         with open(os.path.join(filedir, 'result.json'), 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
@@ -121,10 +119,7 @@ def download_data_by_time(start, end, sid):
         filename = 'result.json'
         path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
 
-        results = db.session.query(SensorDataModel)\
-            .filter(SensorDataModel.sessionId == sid)\
-            .filter(SensorDataModel.time >= tstart)\
-            .filter(SensorDataModel.time <= tend)
+        results = retrieve_by_time(tstart, tend, sid)
         rows = serialise_dataset(results)
 
         with open(path, 'w') as fp:
@@ -196,6 +191,11 @@ def retrieve_by_session_id(sid):
     return db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid)
 
+def retrieve_by_time(tstart, tend, sid):
+    return db.session.query(SensorDataModel) \
+        .filter(SensorDataModel.sessionId == sid) \
+        .filter(SensorDataModel.time >= tstart) \
+        .filter(SensorDataModel.time <= tend)
 
 def serialise_dataset(results):
     rows = [i.serialize for i in results
