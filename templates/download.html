@@ -50,7 +50,7 @@
                 <form id="dataform">
                     <div class="form-group">
                         <div class='input-group date' id='sessionId'>
-                            <label for="sessionIdInput">Session ID</label>
+                            <label for="sessionIdInput">Session ID: </label>
                             <input type='text' class="form-control" id="sessionIdInput"/>
                         </div>
                     </div>
@@ -99,7 +99,7 @@
                                 url = url + from + '/' + to + '/' + sessionId;
                             }
 
-                            window.location(url);
+                            window.location.href = url;
 
                             // $.ajax({
                             //     url: url,
