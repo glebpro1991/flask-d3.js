@@ -134,19 +134,16 @@ def download_data_by_time(start, end, sid):
         path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
 
         results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
-        if results.count() > 1000000:
-            return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
-        else:
-            rows = [i.serialize for i in results
-                .order_by(SensorDataModel.sampleId.asc())
-                .filter(SensorDataModel.time >= tstart)
-                .filter(SensorDataModel.time <= tend)
-                .filter(SensorDataModel.sessionId == sid)
-                .all()]
+        rows = [i.serialize for i in results
+            .order_by(SensorDataModel.sampleId.asc())
+            .filter(SensorDataModel.time >= tstart)
+            .filter(SensorDataModel.time <= tend)
+            .filter(SensorDataModel.sessionId == sid)
+            .all()]
 
-            with open(path, 'w') as fp:
-                j = json.dumps(rows, default=converter, indent=4)
-                fp.write(j)
+        with open(path, 'w') as fp:
+            j = json.dumps(rows, default=converter, indent=4)
+            fp.write(j)
         return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
