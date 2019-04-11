@@ -80,7 +80,7 @@
                         '<td>' + session.deviceId +'</td>' +
                         '<td>' + session.startTime +'</td>' +
                         '<td>' + session.stopTime +'</td>' +
-                        '<td><button>Count</button onClick=count('+ session.sessionId +')></td>' +
+                        '<td><button>Count</button onclick=count('+ session.sessionId +')></td>' +
                         '<td><button>Delete</button></td>' +
                         '</tr>');
                 }
@@ -91,6 +91,7 @@
         });
 
         function count(sid) {
+            console.log(sid);
             let selector = '#' + sid;
             $(selector).text('Counted');
         }
