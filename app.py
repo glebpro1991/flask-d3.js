@@ -81,7 +81,9 @@ def download_data_by_session_id(sid):
         return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
     else:
         rows = serialise(results)
-        write_to_file(path, rows)
+        with open(path, 'w') as fp:
+            j = json.dumps(rows, default=converter, indent=4)
+            fp.write(j)
     return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
@@ -115,7 +117,9 @@ def download_data_by_time(start, end, sid):
     else:
         results = retrieve_by_time(convert_to_datetime(start), convert_to_datetime(end), sid)
         rows = serialise(results)
-        write_to_file(path, rows)
+        with open(path, 'w') as fp:
+            j = json.dumps(rows, default=converter, indent=4)
+            fp.write(j)
         return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
@@ -192,12 +196,6 @@ def retrieve_by_time(tstart, tend, sid):
 
 def convert_to_datetime(timestamp):
     return datetime.datetime.fromtimestamp(timestamp)
-
-
-def write_to_file(path, rows):
-    with open(path, 'w') as fp:
-        j = json.dumps(rows, default=converter, indent=4)
-    fp.write(j)
 
 
 def serialise(results):
