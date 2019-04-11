@@ -75,12 +75,16 @@ def download_data_by_session_id(sid):
 
 @app.route('/api/get/<int:sid>', methods=['GET'])
 def get_data_by_session_id(sid):
+    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
+    filename = 'result.json'
     results = retrieve_by_session_id(sid)
+
     if validate_dataset_size(results.count()):
         return jsonify(results=[{"error": "Result set is too large!"}])
     else:
-        with open(get_path(), 'w') as fp:
-            j = json.dumps(serialise(results), default=converter, indent=4)
+        rows = serialise(results)
+        with open(os.path.join(filedir, filename), 'w') as fp:
+            j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
         return create_response()
 
