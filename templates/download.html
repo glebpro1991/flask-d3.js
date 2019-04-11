@@ -104,17 +104,15 @@
 
                 function constructUrl(sid, fromTimestamp, toTimesamp) {
                     let url = "http://130.159.94.17/api/get/";
-                    let fromTime = getTime(fromTimestamp);
-                    let toTime = getTime(toTimesamp);
 
-                    if (validateTimestamps(fromTime, toTime)) {
-                        $("#statusmsg").text('No datetimes provided or datetime is missing. Retrieving data for session: ' + sid);
+                    if (typeof fromTimestamp !== 'undefined' && typeof toTimesamp !== 'undefined') {
                         url = url + sid;
                     } else {
                         $("#statusmsg").text('Retrieving data for session: '
-                            + sid + ' from ' + from + ' to ' + to);
-                        url = url + from + '/' + to + '/' + sid;
+                            + sid + ' from ' + fromTimestamp + ' to ' + toTimesamp);
+                        url = url + fromTimestamp + '/' + toTimesamp + '/' + sid;
                     }
+
                     return url;
                 }
 
@@ -122,12 +120,22 @@
                     return new Date(timestamp).getTime()/1000;
                 }
 
-                function validateInput(sid, fromTimestamp, toTimestamp) {
+                function validateInput(sid, fromDateTime, toDateTime) {
                     if(validateSessionId(sid)) {
                         $("#statusmsg").text('No session ID provided!');
                         return false;
                     }
-                    return validateTimePeriod(fromTimestamp, toTimestamp);
+
+                    let fromTimestamp = getTime(fromDateTime),
+                    toTimestamp = getTime(toDateTime);
+
+
+                    if(isEmpty(fromTimestamp, toTimestamp)) {
+                        $("#statusmsg").text('No date-times provided or date-time is missing. Retrieving data for session: ' + sid);
+                        return true;
+                    } else {
+                        return validateTimePeriod(fromTimestamp, toTimestamp);
+                    }
                 }
 
                 function validateSessionId(sid) {
@@ -148,11 +156,11 @@
                     return true;
                 }
 
-                function validateTimestamps(from, to) {
-                    return validateTimestamp(from) || validateTimestamp(to);
+                function isEmpty(from, to) {
+                    return isDateTimeEmpty(from) || isDateTimeEmpty(to);
                 }
 
-                function validateTimestamp(timestamp) {
+                function isDateTimeEmpty(timestamp) {
                     return timestamp == null || isNaN(timestamp);
                 }
             </script>
