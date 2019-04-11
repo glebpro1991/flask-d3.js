@@ -89,7 +89,7 @@
                         if(sessionId == null || sessionId === "") {
                             $("#statusmsg").text('No session ID provided!');
                         } else {
-                            let url = "/api/download/";
+                            let url = "http://130.159.94.17/api/get/";
                             if (from == null || isNaN(from) || to == null || isNaN(to)) {
                                 $("#statusmsg").text('Retrieving data for session: ' + sessionId);
                                 url = url + sessionId;

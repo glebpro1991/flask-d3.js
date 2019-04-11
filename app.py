@@ -249,6 +249,7 @@ def create_response():
     response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
     response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
     response.headers['X-Accel-Redirect'] = '/download/result.json'
+    response.header['Access-Control-Allow-Origin'] = '*'
     return response
 
 
