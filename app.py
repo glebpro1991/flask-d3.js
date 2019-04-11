@@ -59,13 +59,15 @@ def get_data_last():
 @app.route('/api/get/<int:sid>', methods=['GET'])
 def get_data_by_session_id(sid):
     filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-    path = os.path.join(filedir, 'result.json')
     results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
+
     if results.count() > 1000000:
-        return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
+        return jsonify(results=[{"error": "Result set is too large!"}])
     else:
         rows = serialise_dataset(results, sid)
-        write_to_file(path, rows)
+        with open(os.path.join(filedir, 'result.json'), 'w') as fp:
+            j = json.dumps(rows, default=converter, indent=4)
+            fp.write(j)
         return create_response()
 
 
@@ -74,13 +76,20 @@ def download_data_by_session_id(sid):
     root_dir = os.path.dirname(os.getcwd())
     filename = 'result.json'
     path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
+
     results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
     if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
     else:
-        rows = serialise_dataset(results, sid)
-        write_to_file(path, rows)
-        return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
+        rows = [i.serialize for i in results
+            .order_by(SensorDataModel.sampleId.asc())
+            .filter(SensorDataModel.sessionId == sid)
+            .all()]
+
+        with open(path, 'w') as fp:
+            j = json.dumps(rows, default=converter, indent=4)
+            fp.write(j)
+    return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
 @app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
@@ -195,17 +204,11 @@ def converter(o):
 
 
 def serialise_dataset(results, sid):
-    return [i.serialize for i in results
+    rows = [i.serialize for i in results
         .order_by(SensorDataModel.sampleId.asc())
         .filter(SensorDataModel.sessionId == sid)
         .all()]
-
-
-def write_to_file(path, rows):
-    with open(path, 'w') as fp:
-        j = json.dumps(rows, default=converter, indent=4)
-    fp.write(j)
-
+    return rows
 
 def validate_dataset(counter, sid):
     errors = []
