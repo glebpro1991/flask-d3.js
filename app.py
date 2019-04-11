@@ -120,7 +120,7 @@ def download_data_by_session_id(sid):
     return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
-@app.route('/api/download/<int:end>/<int:sid>/<int:sid>', methods=['GET'])
+@app.route('/api/download/<int:start>/<int:end>/<int:sid>', methods=['GET'])
 def download_data_by_time(start, end, sid):
     if end - start <= 0:
         return jsonify(results=[{"error": "Invalid timestamps"}])
