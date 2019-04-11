@@ -108,7 +108,7 @@
                     let toTime = getTime(toTimesamp);
 
                     if (validateTimestamps(fromTime, toTime)) {
-                        $("#statusmsg").text('Non datetimes provided or datetime is missing. Retrieving data for session: ' + sid);
+                        $("#statusmsg").text('No datetimes provided or datetime is missing. Retrieving data for session: ' + sid);
                         url = url + sid;
                     } else {
                         $("#statusmsg").text('Retrieving data for session: '
@@ -127,7 +127,7 @@
                         $("#statusmsg").text('No session ID provided!');
                         return false;
                     }
-                    return !validateTimePeriod(fromTimestamp, toTimestamp);
+                    return validateTimePeriod(fromTimestamp, toTimestamp);
                 }
 
                 function validateSessionId(sid) {
@@ -144,6 +144,7 @@
                         $("#statusmsg").text('Invalid datetime: from time is greater than to time.');
                         return false;
                     }
+
                     return true;
                 }
 
