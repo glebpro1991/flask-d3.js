@@ -74,35 +74,21 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
-                <div class="alert alert-primary" role="alert">
-                    <p id="statusmsg"></p>
+
+                <div class="row">
+                    <div class="alert alert-primary" role="alert">
+                        <p id="statusmsg"></p>
+                    </div>
                 </div>
             </div>
             <script type="text/javascript">
                 $(document).ready(function() {
-                    let url = "http://130.159.94.17/api/get/";
-
                     $("#dataform").submit(function(e) {
-                        let sessionId = $("#sessionIdInput").val();
-                        let from = new Date($("#fromInput").val()).getTime()/1000;
-                        let to = new Date($("#toInput").val()).getTime()/1000;
-                        console.log(sessionId +  ": from " + from + " to " + to);
                         e.preventDefault();
-
-                        if(sessionId == null || sessionId === "") {
-                            $("#statusmsg").text('No session ID provided!');
-                        } else {
-                            if (from == null || isNaN(from) || to == null || isNaN(to)) {
-                                $("#statusmsg").text('Retrieving data for session: ' + sessionId);
-                                url = url + sessionId;
-                            } else {
-                                $("#statusmsg").text('Retrieving data for session: '
-                                    + sessionId + ' from ' + from + ' to ' + to);
-                                url = url + from + '/' + to + '/' + sessionId;
-                            }
-
-                            window.location.href = url;
-                        }
+                        window.location.href = constructUrl(
+                            $("#sessionIdInput").val(),
+                            $("#fromInput").val(),
+                            $("#toInput").val());
                     });
                 });
 
@@ -113,6 +99,39 @@
                 $(function () {
                     $('#to').datetimepicker();
                 });
+
+                function constructUrl(sid, fromTimestamp, toTimesamp) {
+                    let url = "http://130.159.94.17/api/get/";
+                    let fromTime = getTime(fromTimestamp);
+                    let toTime = getTime(toTimesamp);
+
+                    if(validateSessionId(sid)) {
+                        $("#statusmsg").text('No session ID provided!');
+                    } else {
+                        if (validateTimestamp(fromTime, toTime)) {
+                            $("#statusmsg").text('Timestamps are invalid. Retrieving data for session: ' + sid);
+                            url = url + sid;
+                        } else {
+                            $("#statusmsg").text('Retrieving data for session: '
+                                + sid + ' from ' + from + ' to ' + to);
+                            url = url + from + '/' + to + '/' + sid;
+                        }
+                    }
+                    return url;
+                }
+
+                function getTime(timestamp) {
+                    return new Date(timestamp).getTime()/1000;
+                }
+
+                function validateSessionId(sid) {
+                    return sid == null || sid === "";
+                }
+
+                function validateTimestamp(from, to) {
+                    return from == null || isNaN(from) || to == null || isNaN(to)
+                }
+
             </script>
         </div>
     </div>
