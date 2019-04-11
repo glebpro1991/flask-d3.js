@@ -56,6 +56,27 @@ def get_data_last():
                    .limit(100).all()])
 
 
+@app.route('/api/get/<int:sid>', methods=['GET'])
+def get_data_by_session_id(sid):
+    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
+    path = os.path.join(filedir, 'result.json')
+    results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
+    rows = serialise_dataset(results, sid)
+    write_to_file(path, rows)
+    return create_response()
+
+
+@app.route('/api/download/<int:sid>', methods=['GET'])
+def download_data_by_session_id(sid):
+    root_dir = os.path.dirname(os.getcwd())
+    filename = 'result.json'
+    path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
+    results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
+    rows = serialise_dataset(results, sid)
+    write_to_file(path, rows)
+    return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
+
+
 @app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
 def get_data_by_time(start, end, sid):
     if end - start <= 0:
@@ -79,45 +100,6 @@ def get_data_by_time(start, end, sid):
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
         return create_response()
-
-
-@app.route('/api/get/<int:sid>', methods=['GET'])
-def get_data_by_session_id(sid):
-    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-    results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
-
-    if results.count() > 1000000:
-        return jsonify(results=[{"error": "Result set is too large!"}])
-    else:
-        rows = [i.serialize for i in results
-            .order_by(SensorDataModel.sampleId.asc())
-            .filter(SensorDataModel.sessionId == sid)
-            .all()]
-        with open(os.path.join(filedir, 'result.json'), 'w') as fp:
-            j = json.dumps(rows, default=converter, indent=4)
-            fp.write(j)
-        return create_response()
-
-
-@app.route('/api/download/<int:sid>', methods=['GET'])
-def download_data_by_session_id(sid):
-    root_dir = os.path.dirname(os.getcwd())
-    filename = 'result.json'
-    path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
-
-    results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
-    if results.count() > 1000000:
-        return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
-    else:
-        rows = [i.serialize for i in results
-            .order_by(SensorDataModel.sampleId.asc())
-            .filter(SensorDataModel.sessionId == sid)
-            .all()]
-
-        with open(path, 'w') as fp:
-            j = json.dumps(rows, default=converter, indent=4)
-            fp.write(j)
-    return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
 @app.route('/api/download/<int:start>/<int:end>/<int:sid>', methods=['GET'])
@@ -204,6 +186,22 @@ def get_sessions():
 def converter(o):
     if isinstance(o, datetime.datetime):
         return o.__str__()
+
+
+def serialise_dataset(results, sid):
+    if results.count() > 1000000:
+        return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
+    else:
+        return [i.serialize for i in results
+            .order_by(SensorDataModel.sampleId.asc())
+            .filter(SensorDataModel.sessionId == sid)
+            .all()]
+
+
+def write_to_file(path, rows):
+    with open(path, 'w') as fp:
+        j = json.dumps(rows, default=converter, indent=4)
+    fp.write(j)
 
 
 def validate_dataset(counter, sid):
