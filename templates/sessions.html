@@ -74,7 +74,7 @@
                 console.log(res);
                 for(let i = 0; i < res.length; i++) {
                     let session = res[i];
-                    $("#sessions").append('<tr id="+ session.sessionId +">' +
+                    $("#sessions").append('<tr id=' + session.sessionId +'>' +
                         '<th>' + session.sessionId + '</th>' +
                         '<td>' + session.userId +'</td>' +
                         '<td>' + session.deviceId +'</td>' +
