@@ -74,9 +74,10 @@
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>
+                <div class="row"></div>
 
-                <div class="row">
-                    <div class="alert alert-primary" role="alert">
+                <div class="row d-none" style="margin-top: 5vh" id="statusContainer">
+                    <div class="alert alert-primary " role="alert">
                         <p id="statusmsg"></p>
                     </div>
                 </div>
@@ -85,12 +86,39 @@
                 $(document).ready(function() {
                     $("#dataform").submit(function(e) {
                         e.preventDefault();
+                        let url = "http://130.159.94.17/api/get/";
                         let sid = $("#sessionIdInput").val(),
-                            fromTimestamp = $("#fromInput").val(),
-                            toTimestamp = $("#toInput").val();
-                        console.log('Session: ' + sid + ': ' + fromTimestamp + toTimestamp);
-                        if(validateInput(sid, fromTimestamp, toTimestamp)) {
-                            window.location.href = constructUrl(sid, fromTimestamp, toTimestamp);
+                            fromDateTime = $("#fromInput").val(),
+                            toDateTime = $("#toInput").val(),
+                            fromTimestamp = getTime(fromDateTime),
+                            toTimestamp = getTime(toDateTime);
+
+                        $("#statusContainer").removeClass('d-none');
+                        let status = $("#statusmsg");
+
+                        if(validateSessionId(sid)) {
+                            status.text('No session ID provided!');
+                            return;
+                        }
+
+                        if(isEmpty(fromTimestamp, toTimestamp)) {
+                            status.text('No date-times provided or date-time is missing. Retrieving data for session: ' + sid);
+                            window.location.href = url + sid;
+                        } else {
+                            if(toTimestamp - fromTimestamp > 10800) {
+                                status.text('Selected time frame is too large. The maximum of 3 hours.');
+                                return;
+                            }
+
+                            if(toTimestamp - fromTimestamp <= 0) {
+                                status.text('Invalid datetime: from time is greater than to time.');
+                                return;
+                            }
+
+                            status.text('Retrieving data for session: '
+                                + sid + ' from ' + fromTimestamp + ' to ' + toTimestamp);
+                            url = url + fromTimestamp + '/' + toTimestamp + '/' + sid;
+                            window.location.href = url;
                         }
                     });
                 });
@@ -103,62 +131,16 @@
                     $('#to').datetimepicker();
                 });
 
-                function constructUrl(sid, fromTimestamp, toTimesamp) {
-                    let url = "http://130.159.94.17/api/get/";
-
-                    if (typeof fromTimestamp !== 'undefined' && typeof toTimesamp !== 'undefined') {
-                        url = url + sid;
-                    } else {
-                        $("#statusmsg").text('Retrieving data for session: '
-                            + sid + ' from ' + fromTimestamp + ' to ' + toTimesamp);
-                        url = url + fromTimestamp + '/' + toTimesamp + '/' + sid;
-                    }
-
-                    return url;
-                }
-
                 function getTime(timestamp) {
                     return new Date(timestamp).getTime()/1000;
-                }
-
-                function validateInput(sid, fromDateTime, toDateTime) {
-                    if(validateSessionId(sid)) {
-                        $("#statusmsg").text('No session ID provided!');
-                        return false;
-                    }
-
-                    let fromTimestamp = getTime(fromDateTime),
-                    toTimestamp = getTime(toDateTime);
-
-
-                    if(isEmpty(fromTimestamp, toTimestamp)) {
-                        $("#statusmsg").text('No date-times provided or date-time is missing. Retrieving data for session: ' + sid);
-                        return true;
-                    } else {
-                        return validateTimePeriod(fromTimestamp, toTimestamp);
-                    }
                 }
 
                 function validateSessionId(sid) {
                     return sid == null || sid === "";
                 }
 
-                function validateTimePeriod(fromTimestamp, toTimestamp) {
-                    if(toTimestamp - fromTimestamp > 10800) {
-                        $("#statusmsg").text('Selected time frame is too large. The maximum of 3 hours.');
-                        return false;
-                    }
-
-                    if(toTimestamp - fromTimestamp <= 0) {
-                        $("#statusmsg").text('Invalid datetime: from time is greater than to time.');
-                        return false;
-                    }
-
-                    return true;
-                }
-
-                function isEmpty(from, to) {
-                    return isDateTimeEmpty(from) || isDateTimeEmpty(to);
+                function isEmpty(fromTimestamp, toTimestamp) {
+                    return isDateTimeEmpty(fromTimestamp) || isDateTimeEmpty(toTimestamp);
                 }
 
                 function isDateTimeEmpty(timestamp) {
