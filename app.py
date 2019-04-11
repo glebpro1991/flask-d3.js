@@ -56,23 +56,6 @@ def get_data_last():
                    .limit(100).all()])
 
 
-# @app.route('/api/download/<int:sid>', methods=['GET'])
-# def download_data_by_session_id(sid):
-#     root_dir = os.path.dirname(os.getcwd())
-#     filename = 'result.json'
-#     path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
-#
-#     results = retrieve_by_session_id(sid)
-#     if results.count() > 1000000:
-#         return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
-#     else:
-#         rows = serialise(results)
-#         with open(path, 'w') as fp:
-#             j = json.dumps(rows, default=converter, indent=4)
-#             fp.write(j)
-#     return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
-
-
 @app.route('/api/get/<int:sid>', methods=['GET'])
 def get_data_by_session_id(sid):
     results = retrieve_by_session_id(sid)
@@ -97,25 +80,6 @@ def get_data_by_time(start, end, sid):
             j = json.dumps(serialise(results), default=converter, indent=4)
             fp.write(j)
         return create_response()
-
-
-# @app.route('/api/download/<int:start>/<int:end>/<int:sid>', methods=['GET'])
-# def download_data_by_time(start, end, sid):
-#     root_dir = os.path.dirname(os.getcwd())
-#     filename = 'result.json'
-#     path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
-#
-#     if validate_params(start, end):
-#         return jsonify(results=[{"error": "Invalid timestamps"}])
-#     elif validate_time_period(start, end):
-#         return jsonify(results=[{"error": "Time period is too large"}])
-#     else:
-#         results = retrieve_by_time(convert_to_datetime(start), convert_to_datetime(end), sid)
-#         rows = serialise(results)
-#         with open(path, 'w') as fp:
-#             j = json.dumps(rows, default=converter, indent=4)
-#             fp.write(j)
-#         return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
