@@ -120,6 +120,36 @@ def download_data_by_session_id(sid):
     return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
+@app.route('/api/download/<int:end>/<int:sid>/<int:sid>', methods=['GET'])
+def download_data_by_time(start, end, sid):
+    if end - start <= 0:
+        return jsonify(results=[{"error": "Invalid timestamps"}])
+    elif end - start > 10800:
+        return jsonify(results=[{"error": "Time period is too large"}])
+    else:
+        tstart = datetime.datetime.fromtimestamp(start)
+        tend = datetime.datetime.fromtimestamp(end)
+        root_dir = os.path.dirname(os.getcwd())
+        filename = 'result.json'
+        path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
+
+        results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
+        if results.count() > 1000000:
+            return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
+        else:
+            rows = [i.serialize for i in results
+                .order_by(SensorDataModel.sampleId.asc())
+                .filter(SensorDataModel.time >= tstart)
+                .filter(SensorDataModel.time <= tend)
+                .filter(SensorDataModel.sessionId == sid)
+                .all()]
+
+            with open(path, 'w') as fp:
+                j = json.dumps(rows, default=converter, indent=4)
+                fp.write(j)
+        return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
+
+
 @app.route('/api/count/<int:sid>', methods=['GET'])
 def count_by_session_id(sid):
     num_rows = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid).count()

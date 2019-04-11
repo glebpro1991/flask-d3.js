@@ -221,9 +221,3 @@ function Visualisation() {
         populateTimeSeries(data);
     };
 }
-
-
-
-
-
-
