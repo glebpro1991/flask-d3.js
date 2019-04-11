@@ -85,10 +85,12 @@
                 $(document).ready(function() {
                     $("#dataform").submit(function(e) {
                         e.preventDefault();
-                        window.location.href = constructUrl(
-                            $("#sessionIdInput").val(),
-                            $("#fromInput").val(),
-                            $("#toInput").val());
+                        let sid = $("#sessionIdInput").val(),
+                            fromTimestamp = $("#fromInput").val(),
+                            toTimestamp = $("#toInput").val();
+                        if(validateInput(sid, fromTimestamp, toTimestamp)) {
+                            window.location.href = constructUrl(sid, fromTimestamp, toTimestamp);
+                        }
                     });
                 });
 
@@ -105,17 +107,13 @@
                     let fromTime = getTime(fromTimestamp);
                     let toTime = getTime(toTimesamp);
 
-                    if(validateSessionId(sid)) {
-                        $("#statusmsg").text('No session ID provided!');
+                    if (validateTimestamps(fromTime, toTime)) {
+                        $("#statusmsg").text('Non datetimes provided or datetime is missing. Retrieving data for session: ' + sid);
+                        url = url + sid;
                     } else {
-                        if (validateTimestamp(fromTime, toTime)) {
-                            $("#statusmsg").text('Timestamps are invalid. Retrieving data for session: ' + sid);
-                            url = url + sid;
-                        } else {
-                            $("#statusmsg").text('Retrieving data for session: '
-                                + sid + ' from ' + from + ' to ' + to);
-                            url = url + from + '/' + to + '/' + sid;
-                        }
+                        $("#statusmsg").text('Retrieving data for session: '
+                            + sid + ' from ' + from + ' to ' + to);
+                        url = url + from + '/' + to + '/' + sid;
                     }
                     return url;
                 }
@@ -124,14 +122,38 @@
                     return new Date(timestamp).getTime()/1000;
                 }
 
+                function validateInput(sid, fromTimestamp, toTimestamp) {
+                    if(validateSessionId(sid)) {
+                        $("#statusmsg").text('No session ID provided!');
+                        return false;
+                    }
+                    return !validateTimePeriod(fromTimestamp, toTimestamp);
+                }
+
                 function validateSessionId(sid) {
                     return sid == null || sid === "";
                 }
 
-                function validateTimestamp(from, to) {
-                    return from == null || isNaN(from) || to == null || isNaN(to)
+                function validateTimePeriod(fromTimestamp, toTimestamp) {
+                    if(toTimestamp - fromTimestamp > 10800) {
+                        $("#statusmsg").text('Selected time frame is too large. The maximum of 3 hours.');
+                        return false;
+                    }
+
+                    if(toTimestamp - fromTimestamp <= 0) {
+                        $("#statusmsg").text('Invalid datetime: from time is greater than to time.');
+                        return false;
+                    }
+                    return true;
                 }
 
+                function validateTimestamps(from, to) {
+                    return validateTimestamp(from) || validateTimestamp(to);
+                }
+
+                function validateTimestamp(timestamp) {
+                    return timestamp == null || isNaN(timestamp);
+                }
             </script>
         </div>
     </div>
