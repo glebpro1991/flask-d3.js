@@ -84,10 +84,7 @@ def get_data_by_time(start, end, sid):
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
 def count_by_session_id(sid):
-    num_rows = db.session.query(SensorDataModel) \
-        .filter(SensorDataModel.sessionId == sid) \
-        .count()
-    return 'Number of records for session ' + str(sid) + ': ' + str(num_rows)
+    return str(retrieve_by_session_id(sid).count())
 
 
 @app.route('/api/countAll', methods=['GET'])
