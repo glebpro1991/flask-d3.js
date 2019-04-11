@@ -80,7 +80,7 @@ function Visualisation() {
         updateTimeSeriesView();
     }
 
-    function populateAmplitudes(point) {
+    function populateAmplitudes(accPoint, gyroPoint, magPoint) {
         ampls.acc.x.push(accPoint.x);
         ampls.acc.y.push(accPoint.y);
         ampls.acc.z.push(accPoint.z);
