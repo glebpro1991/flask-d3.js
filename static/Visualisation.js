@@ -52,12 +52,11 @@ function Visualisation() {
             let p = data[i];
 
             // Ignore Historic Data
-            console.log(p);
-            if(Date.now() - Date.parse(p.time) > 300000) {
-                document.getElementById("syncId").innerText = p.sampleId;
-                document.getElementById("syncTime").innerText = p.time;
-                return;
-            }
+            // if(Date.now() - Date.parse(p.time) > 300000) {
+            //     document.getElementById("syncId").innerText = p.sampleId;
+            //     document.getElementById("syncTime").innerText = p.time;
+            //     return;
+            // }
 
             let accPoint = getTimeDataPoint(p.time, p.accX, p.accY, p.accZ);
             if(accTimeQ.push(accPoint) === qSize)
