@@ -88,6 +88,7 @@
                         let sid = $("#sessionIdInput").val(),
                             fromTimestamp = $("#fromInput").val(),
                             toTimestamp = $("#toInput").val();
+                        console.log('Session: ' + sid + ': ' + fromTimestamp + toTimestamp);
                         if(validateInput(sid, fromTimestamp, toTimestamp)) {
                             window.location.href = constructUrl(sid, fromTimestamp, toTimestamp);
                         }
