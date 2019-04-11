@@ -61,9 +61,12 @@ def get_data_by_session_id(sid):
     filedir = '/home/gprohorovs/flask-sensor-data-app/download'
     path = os.path.join(filedir, 'result.json')
     results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
-    rows = serialise_dataset(results, sid)
-    write_to_file(path, rows)
-    return create_response()
+    if results.count() > 1000000:
+        return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
+    else:
+        rows = serialise_dataset(results, sid)
+        write_to_file(path, rows)
+        return create_response()
 
 
 @app.route('/api/download/<int:sid>', methods=['GET'])
@@ -72,9 +75,12 @@ def download_data_by_session_id(sid):
     filename = 'result.json'
     path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
     results = db.session.query(SensorDataModel).filter(SensorDataModel.sessionId == sid)
-    rows = serialise_dataset(results, sid)
-    write_to_file(path, rows)
-    return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
+    if results.count() > 1000000:
+        return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
+    else:
+        rows = serialise_dataset(results, sid)
+        write_to_file(path, rows)
+        return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
 @app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
@@ -189,13 +195,10 @@ def converter(o):
 
 
 def serialise_dataset(results, sid):
-    if results.count() > 1000000:
-        return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
-    else:
-        return [i.serialize for i in results
-            .order_by(SensorDataModel.sampleId.asc())
-            .filter(SensorDataModel.sessionId == sid)
-            .all()]
+    return [i.serialize for i in results
+        .order_by(SensorDataModel.sampleId.asc())
+        .filter(SensorDataModel.sessionId == sid)
+        .all()]
 
 
 def write_to_file(path, rows):
