@@ -63,7 +63,7 @@ def get_data_by_session_id(sid):
     if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large!"}])
     else:
-        rows = serialise_dataset(results)
+        rows = serialise(results)
         with open(os.path.join(filedir, 'result.json'), 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
@@ -80,7 +80,7 @@ def download_data_by_session_id(sid):
     if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large! Please provide to and from time!"}])
     else:
-        rows = serialise_dataset(results)
+        rows = serialise(results)
         with open(path, 'w') as fp:
             j = json.dumps(rows, default=converter, indent=4)
             fp.write(j)
@@ -96,35 +96,26 @@ def get_data_by_time(start, end, sid):
     elif end - start > 10800:
         return jsonify(results=[{"error": "Time period is too large"}])
     else:
-        tstart = datetime.datetime.fromtimestamp(start)
-        tend = datetime.datetime.fromtimestamp(end)
-        results = retrieve_by_time(tstart, tend, sid)
-        rows = serialise_dataset(results)
-        with open(os.path.join(filedir, 'result.json'), 'w') as fp:
-            j = json.dumps(rows, default=converter, indent=4)
-            fp.write(j)
+        results = retrieve_by_time(convert_to_datetime(start), convert_to_datetime(end), sid)
+        rows = serialise(results)
+        write_to_file(os.path.join(filedir, 'result.json'), rows)
         return create_response()
 
 
 @app.route('/api/download/<int:start>/<int:end>/<int:sid>', methods=['GET'])
 def download_data_by_time(start, end, sid):
+    root_dir = os.path.dirname(os.getcwd())
+    filename = 'result.json'
+    path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
+
     if end - start <= 0:
         return jsonify(results=[{"error": "Invalid timestamps"}])
     elif end - start > 10800:
         return jsonify(results=[{"error": "Time period is too large"}])
     else:
-        tstart = datetime.datetime.fromtimestamp(start)
-        tend = datetime.datetime.fromtimestamp(end)
-        root_dir = os.path.dirname(os.getcwd())
-        filename = 'result.json'
-        path = os.path.join(root_dir, 'flask-sensor-data-app', 'static', filename)
-
-        results = retrieve_by_time(tstart, tend, sid)
-        rows = serialise_dataset(results)
-
-        with open(path, 'w') as fp:
-            j = json.dumps(rows, default=converter, indent=4)
-            fp.write(j)
+        results = retrieve_by_time(convert_to_datetime(start), convert_to_datetime(end), sid)
+        rows = serialise(results)
+        write_to_file(path, rows)
         return send_from_directory(os.path.join(root_dir, 'flask-sensor-data-app', 'static'), filename)
 
 
@@ -191,13 +182,25 @@ def retrieve_by_session_id(sid):
     return db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid)
 
+
 def retrieve_by_time(tstart, tend, sid):
     return db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid) \
         .filter(SensorDataModel.time >= tstart) \
         .filter(SensorDataModel.time <= tend)
 
-def serialise_dataset(results):
+
+def convert_to_datetime(timestamp):
+    return datetime.datetime.fromtimestamp(timestamp)
+
+
+def write_to_file(path, rows):
+    with open(path, 'w') as fp:
+        j = json.dumps(rows, default=converter, indent=4)
+    fp.write(j)
+
+
+def serialise(results):
     rows = [i.serialize for i in results
         .order_by(SensorDataModel.sampleId.asc())
         .all()]
