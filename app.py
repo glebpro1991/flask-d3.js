@@ -79,7 +79,7 @@ def get_data_by_session_id(sid):
     filename = 'result.json'
     results = retrieve_by_session_id(sid)
 
-    if validate_dataset_size(results.count()):
+    if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large!"}])
     else:
         rows = serialise(results)
@@ -253,7 +253,6 @@ def create_response():
     response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
     response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
     response.headers['X-Accel-Redirect'] = '/download/result.json'
-    response.header['Access-Control-Allow-Origin'] = '*'
     return response
 
 
