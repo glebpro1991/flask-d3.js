@@ -14,8 +14,10 @@ POSTGRES = {
     'pw': 'primary1',
     'db': 'sensordata',
     'host': 'localhost',
-    'port': '5432',
+    'port': '5432'
 }
+
+FILE_DIR = '/home/gprohorovs/flask-sensor-data-app/download'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%(user)s:\
 %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
@@ -95,7 +97,7 @@ def validate(sid):
         response = [
             {'Session': sid},
             {'Time taken': str(time.time() - tstart)},
-            {'Errors': validate_dataset(first[0], sid)}]
+            {'Errors': run_validation(first[0], sid)}]
         return jsonify(results=response)
 
 
@@ -168,16 +170,14 @@ def convert_to_datetime(timestamp):
 
 
 def get_path():
-    file_dir = '/home/gprohorovs/flask-sensor-data-app/download'
-    file_name = 'result.json'
-    return os.path.join(file_dir, file_name)
+    return os.path.join(FILE_DIR, 'result.json')
 
 
 def serialise(results):
     return [i.serialize for i in results]
 
 
-def validate_dataset(counter, sid):
+def run_validation(counter, sid):
     errors = []
     for sample in db.session.query(SensorDataModel.sampleId) \
             .filter(SensorDataModel.sessionId == sid) \
@@ -199,7 +199,7 @@ def create_response():
     response.headers['Cache-Control'] = 'no-cache'
     response.headers['Content-Type'] = 'application/octet-stream'
     response.headers['Content-Disposition'] = 'attachment; filename=%s' % 'result.json'
-    response.headers['Content-Length'] = os.path.getsize('/home/gprohorovs/flask-sensor-data-app/download/result.json')
+    response.headers['Content-Length'] = os.path.getsize(get_path())
     response.headers['X-Accel-Redirect'] = '/download/result.json'
     return response
 
