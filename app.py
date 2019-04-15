@@ -50,6 +50,11 @@ def show_about_page():
     return render_template('about.html')
 
 
+@app.route('/nav', methods=['GET'])
+def show_navigation_menu():
+    return render_template('nav.html')
+
+
 @app.route('/api/getLast', methods=['GET'])
 def get_last():
     results = get_last_sample_batch()
@@ -102,7 +107,7 @@ def delete_by_session_id(sid):
     num_rows = db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid) \
         .delete()
-    db.session.query(SessionModel)\
+    db.session.query(SessionModel) \
         .filter(SessionModel.sessionId == sid) \
         .delete()
     db.session.commit()
