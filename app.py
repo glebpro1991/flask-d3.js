@@ -110,7 +110,9 @@ def delete_all():
 @app.route('/api/validate/<int:sid>', methods=['GET'])
 def validate(sid):
     tstart = time.time()
+
     first = retrieve_first(sid)
+
     if first is None:
         return 'No records in the table'
     else:
@@ -136,8 +138,7 @@ def converter(o):
 
 def retrieve_by_session_id(sid):
     return db.session.query(SensorDataModel) \
-        .filter(SensorDataModel.sessionId == sid) \
-        .order_by(SensorDataModel.sampleId.asc())
+        .filter(SensorDataModel.sessionId == sid)
 
 
 def retrieve_by_time(tstart, tend, sid):
@@ -183,13 +184,19 @@ def validate_dataset_size(count):
 
 
 def serialise(results):
-    rows = [i.serialize for i in results.all()]
+    rows = [i.serialize for i in results
+        .order_by(SensorDataModel.sampleId.asc())
+        .all()]
     return rows
 
 
 def validate_dataset(counter, sid):
     errors = []
-    for sample in retrieve_by_session_id(sid).all():
+
+    for sample in db.session.query(SensorDataModel.sampleId) \
+            .filter(SensorDataModel.sessionId == sid) \
+            .order_by(SensorDataModel.sampleId.asc()) \
+            .all():
         sample_id = int(sample[0])
 
         if counter != sample_id:
@@ -200,6 +207,7 @@ def validate_dataset(counter, sid):
                           + '. ' + str(difference)
                           + ' rows are missing!')
         counter = counter + 1
+
     return errors
 
 
