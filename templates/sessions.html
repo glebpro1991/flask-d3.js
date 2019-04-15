@@ -51,8 +51,8 @@
                         <th scope="col">Device ID</th>
                         <th scope="col">Start Time</th>
                         <th scope="col">End Time</th>
-                        <th scope="col">Count</th>
-                        <th scope="col">Delete</th>
+                        <!--<th scope="col">Count</th>-->
+                        <!--<th scope="col">Delete</th>-->
                     </tr>
                     </thead>
                     <tbody id="sessions">
@@ -82,7 +82,9 @@
                         '<td>' + session.stopTime +'</td>' +
                         '<td id=count' + sid + '></td>' +
                         '<td id=delete' + sid + '></td>' +
+                        '<td id=validate' + sid + '></td>' +
                         '</tr>');
+
                     let countButton = $("<button>Count</button>"),
                     countButtonSel = '#count' + sid;
                     countButton.click(function() {
@@ -95,6 +97,7 @@
                         });
                     });
                     countButton.appendTo(countButtonSel);
+
                     let deleteButton = $("<button>Delete</button>"),
                     deleteButtonSel = '#delete' + sid;
                     deleteButton.click(function() {
@@ -107,6 +110,13 @@
                         });
                     });
                     deleteButton.appendTo(deleteButtonSel);
+
+                    let validateButton = $("<button>Validate</button>"),
+                        validateButtonSel = '#validate' + sid;
+                    validateButton.click(function() {
+                        window.location.href = "/api/validate/" + sid;
+                    });
+                    validateButton.appendTo(validateButtonSel);
                 }
             },
             error: function(err) {

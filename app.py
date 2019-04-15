@@ -180,7 +180,6 @@ def serialise(results):
 
 def validate_dataset(counter, sid):
     errors = []
-
     for sample in db.session.query(SensorDataModel.sampleId) \
             .filter(SensorDataModel.sessionId == sid) \
             .order_by(SensorDataModel.sampleId.asc()) \
@@ -195,7 +194,6 @@ def validate_dataset(counter, sid):
                           + '. ' + str(difference)
                           + ' rows are missing!')
         counter = counter + 1
-
     return errors
 
 
