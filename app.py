@@ -50,13 +50,13 @@ def show_about_page():
 
 @app.route('/api/getLast', methods=['GET'])
 def get_last():
-    results = retrieve_last()
+    results = get_last_sample_batch()
     return jsonify([i.serialize for i in results.all()])
 
 
 @app.route('/api/get/<int:sid>', methods=['GET'])
 def get_by_session_id(sid):
-    results = retrieve_by_session_id(sid)
+    results = get_samples_by_session_id(sid)
     if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large!"}])
     else:
@@ -73,7 +73,7 @@ def get_by_time(start, end, sid):
     elif end - start > 10800:
         return jsonify(results=[{"error": "Time period is too large"}])
     else:
-        results = retrieve_by_time(convert_to_datetime(start), convert_to_datetime(end), sid)
+        results = get_samples_by_time(convert_to_datetime(start), convert_to_datetime(end), sid)
         with open(get_path(), 'w') as fp:
             j = json.dumps(serialise(results), default=converter, indent=4)
             fp.write(j)
@@ -82,13 +82,13 @@ def get_by_time(start, end, sid):
 
 @app.route('/api/count/<int:sid>', methods=['GET'])
 def count_by_session_id(sid):
-    return str(retrieve_by_session_id(sid).count())
+    return str(get_samples_by_session_id(sid).count())
 
 
 @app.route('/api/validate/<int:sid>', methods=['GET'])
 def validate(sid):
     tstart = time.time()
-    first = retrieve_first(sid)
+    first = get_first_sample(sid)
     if first is None:
         return 'No records!'
     else:
@@ -136,13 +136,13 @@ def converter(o):
         return o.__str__()
 
 
-def retrieve_by_session_id(sid):
+def get_samples_by_session_id(sid):
     return db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid) \
         .order_by(SensorDataModel.sampleId.asc())
 
 
-def retrieve_by_time(tstart, tend, sid):
+def get_samples_by_time(tstart, tend, sid):
     return db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid) \
         .filter(SensorDataModel.time >= tstart) \
@@ -150,14 +150,14 @@ def retrieve_by_time(tstart, tend, sid):
         .order_by(SensorDataModel.sampleId.asc())
 
 
-def retrieve_first(sid):
+def get_first_sample(sid):
     return db.session.query(SensorDataModel.sampleId) \
         .filter(SensorDataModel.sessionId == sid) \
         .order_by(SensorDataModel.sampleId.asc()) \
         .first()
 
 
-def retrieve_last():
+def get_last_sample_batch():
     return db.session.query(SensorDataModel) \
         .order_by(SensorDataModel.sampleId.desc()) \
         .limit(100)
@@ -168,24 +168,19 @@ def convert_to_datetime(timestamp):
 
 
 def get_path():
-    filedir = '/home/gprohorovs/flask-sensor-data-app/download'
-    filename = 'result.json'
-    return os.path.join(filedir, filename)
+    file_dir = '/home/gprohorovs/flask-sensor-data-app/download'
+    file_name = 'result.json'
+    return os.path.join(file_dir, file_name)
 
 
 def serialise(results):
-    rows = [i.serialize for i in results]
-    return rows
+    return [i.serialize for i in results]
 
 
 def validate_dataset(counter, sid):
     errors = []
-    for sample in db.session.query(SensorDataModel.sampleId) \
-            .filter(SensorDataModel.sessionId == sid) \
-            .order_by(SensorDataModel.sampleId.asc()) \
-            .all():
+    for sample in get_samples_by_session_id(sid):
         sample_id = int(sample[0])
-
         if counter != sample_id:
             difference = (sample_id - counter)
             counter = counter + difference
