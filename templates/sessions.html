@@ -84,16 +84,17 @@
                         '<td id=delete' + sid + '></td>' +
                         '</tr>');
                     let countButton = $("<button>Count</button>");
+                    let countButtonSel = '#count' + sid;
                     countButton.click(function() {
                         $.ajax({
                             url: "/api/count/" + sid,
                             type: 'GET',
                             success: function(res) {
-                                $(this).text(res);
+                                $(countButtonSel).text(res);
                             }
                         });
                     });
-                    countButton.appendTo('#count' + sid);
+                    countButton.appendTo(countButtonSel);
                     let deleteButton = $("<button>Delete</button>");
                     deleteButton.click(function() {
                         alert("Hi back!");
