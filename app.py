@@ -172,7 +172,7 @@ def get_path():
 def write_to_file(results):
     with open(get_path(), 'w') as fp:
         j = json.dumps(serialise(results), default=converter, indent=4)
-    fp.write(j)
+        fp.write(j)
 
 
 def serialise(results):
