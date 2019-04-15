@@ -110,9 +110,7 @@ def delete_all():
 @app.route('/api/validate/<int:sid>', methods=['GET'])
 def validate(sid):
     tstart = time.time()
-
     first = retrieve_first(sid)
-
     if first is None:
         return 'No records in the table'
     else:

@@ -81,11 +81,17 @@
                         '<td>' + session.startTime +'</td>' +
                         '<td>' + session.stopTime +'</td>' +
                         '<td id=count' + sid + '></td>' +
-                        '<td></td>' +
+                        '<td id=delete' + sid + '></td>' +
                         '</tr>');
                     let countButton = $("<button>Count</button>");
-                    countButton.click(function() {
-                        alert("Hi back!");
+                    countButton.click(function(sid) {
+                        $.ajax({
+                            url: "/api/count/" + sid,
+                            type: 'GET',
+                            sucess: function(res) {
+                                console.log(res);
+                            }
+                        });
                     });
                     countButton.appendTo('#count' + sid);
                     let deleteButton = $("<button>Delete</button>");
@@ -99,12 +105,6 @@
                 console.log(err);
             }
         });
-
-        function count(sid) {
-            console.log(sid);
-            let selector = '#' + sid;
-            $(selector).text('Counted');
-        }
     });
 </script>
 </html>
