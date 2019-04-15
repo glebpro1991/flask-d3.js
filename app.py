@@ -68,9 +68,9 @@ def get_by_session_id(sid):
 
 @app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
 def get_by_time(start, end, sid):
-    if validate_params(start, end):
+    if end - start <= 0:
         return jsonify(results=[{"error": "Invalid timestamps"}])
-    elif validate_time_period(start, end):
+    elif end - start > 10800:
         return jsonify(results=[{"error": "Time period is too large"}])
     else:
         results = retrieve_by_time(convert_to_datetime(start), convert_to_datetime(end), sid)
@@ -85,10 +85,18 @@ def count_by_session_id(sid):
     return str(retrieve_by_session_id(sid).count())
 
 
-@app.route('/api/countAll', methods=['GET'])
-def count_all():
-    num_rows = db.session.query(SensorDataModel).count()
-    return 'The total number of rows: ' + str(num_rows)
+@app.route('/api/validate/<int:sid>', methods=['GET'])
+def validate(sid):
+    tstart = time.time()
+    first = retrieve_first(sid)
+    if first is None:
+        return 'No records!'
+    else:
+        response = [
+            {'Session': sid},
+            {'Time taken': str(time.time() - tstart)},
+            {'Errors': validate_dataset(first[0], sid)}]
+        return jsonify(results=response)
 
 
 @app.route('/api/delete/<int:sid>')
@@ -96,29 +104,23 @@ def delete_by_session_id(sid):
     num_rows = db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid) \
         .delete()
+    db.session.query(SessionModel)\
+        .filter(SensorDataModel.sessionId == sid) \
+        .delete()
     db.session.commit()
-    return 'Number of records for session ' + str(sid) + ' deleted: ' + str(num_rows)
+    return 'Deleted: ' + str(num_rows)
+
+
+@app.route('/api/countAll', methods=['GET'])
+def count_all():
+    return str(db.session.query(SensorDataModel).count())
 
 
 @app.route('/api/deleteAll')
 def delete_all():
     num_rows = db.session.query(SensorDataModel).delete()
     db.session.commit()
-    return 'The total number of rows deleted ' + str(num_rows)
-
-
-@app.route('/api/validate/<int:sid>', methods=['GET'])
-def validate(sid):
-    tstart = time.time()
-    first = retrieve_first(sid)
-    if first is None:
-        return 'No records in the table'
-    else:
-        response = [
-            {'session': sid},
-            {'time taken': str(time.time() - tstart)},
-            {'errors': validate_dataset(first[0], sid)}]
-        return jsonify(results=response)
+    return 'Deleted ' + str(num_rows)
 
 
 @app.route('/api/getSessions')
@@ -167,18 +169,6 @@ def get_path():
     filedir = '/home/gprohorovs/flask-sensor-data-app/download'
     filename = 'result.json'
     return os.path.join(filedir, filename)
-
-
-def validate_params(tstart, tend):
-    return tend - tstart <= 0
-
-
-def validate_time_period(tstart, tend):
-    return tend - tstart > 10800
-
-
-def validate_dataset_size(count):
-    return count > 1000000
 
 
 def serialise(results):
