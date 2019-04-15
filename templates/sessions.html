@@ -79,9 +79,15 @@
                         '<td>' + session.deviceId +'</td>' +
                         '<td>' + session.startTime +'</td>' +
                         '<td>' + session.stopTime +'</td>' +
-                        '<td><button>Count</button onclick="count(\'' + session.sessionId + '\')"></td>' +
+                        '<td><button>Count</button></td>' +
                         '<td><button>Delete</button></td>' +
                         '</tr>');
+                    let countButton = document.createElement('input');
+                    countButton.type = "button";
+                    countButton.addEventListener('click', function(){
+                        count(session.sessionId);
+                    });
+                    $(session.sessionId).appendChild(countButton);
                 }
             },
             error: function(err) {
