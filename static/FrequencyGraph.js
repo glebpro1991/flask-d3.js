@@ -91,7 +91,7 @@ function FrequencyGraph() {
     this.redraw = function(data) {
         xScale.domain(data.data.map(function(d) { return d.index; }));
         if(data.maxValue > 500) {
-            yScale.domain([0, 100]);
+            yScale.domain([0, 500]);
         } else {
             yScale.domain([0, data.maxValue]);
         }
