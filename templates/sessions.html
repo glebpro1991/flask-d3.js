@@ -74,15 +74,21 @@
                 console.log(res);
                 for(let i = 0; i < res.length; i++) {
                     let session = res[i];
+//                     let el = document.createElement('tr');
+//                     el.type = "button";
+//                     el.addEventListener('click', function(){
+//                         gotoNode(result.name);
+//                     });
+// ​                   document.body.appendChild(inputElement);​
+
                     $("#sessions").append('<tr id=' + session.sessionId +'>' +
                         '<th>' + session.sessionId + '</th>' +
                         '<td>' + session.userId +'</td>' +
                         '<td>' + session.deviceId +'</td>' +
                         '<td>' + session.startTime +'</td>' +
                         '<td>' + session.stopTime +'</td>' +
-                        '<td><button>Count</button onclick="count(\'' + session.sessionId + '\')"></td>' +
-                        '<td><button>Delete</button></td>' +
                         '</tr>');
+
                 }
             },
             error: function(err) {
