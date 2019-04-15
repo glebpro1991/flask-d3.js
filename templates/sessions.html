@@ -89,7 +89,7 @@
                     countButton.addEventListener('click', function(){
                         count(session.sessionId);
                     });
-                    $("tr[id=" + sid + "").appendChild(countButton);
+                    $("tr[id=" + sid + "]").appendChild(countButton);
                 }
             },
             error: function(err) {
