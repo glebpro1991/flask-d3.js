@@ -89,7 +89,7 @@
                             url: "/api/count/" + sid,
                             type: 'GET',
                             success: function(res) {
-                                console.log(res);
+                                $(this).text(res);
                             }
                         });
                     });
