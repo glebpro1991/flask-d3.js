@@ -50,10 +50,10 @@ function Visualisation() {
             let p = data[i];
 
             // Ignore Historic Data
-            if(Date.now() - Date.parse(p.time) > 300000) {
-                document.getElementById("syncTime").innerText = p.time;
-                return;
-            }
+            // if(Date.now() - Date.parse(p.time) > 300000) {
+            //     document.getElementById("syncTime").innerText = p.time;
+            //     return;
+            // }
 
             let accPoint = getTimeDataPoint(p.time, p.accX, p.accY, p.accZ);
             if(accTimeQ.push(accPoint) === qSize)

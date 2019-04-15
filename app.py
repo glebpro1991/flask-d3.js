@@ -138,14 +138,16 @@ def converter(o):
 
 def retrieve_by_session_id(sid):
     return db.session.query(SensorDataModel) \
-        .filter(SensorDataModel.sessionId == sid)
+        .filter(SensorDataModel.sessionId == sid) \
+        .order_by(SensorDataModel.sampleId.asc())
 
 
 def retrieve_by_time(tstart, tend, sid):
     return db.session.query(SensorDataModel) \
         .filter(SensorDataModel.sessionId == sid) \
         .filter(SensorDataModel.time >= tstart) \
-        .filter(SensorDataModel.time <= tend)
+        .filter(SensorDataModel.time <= tend) \
+        .order_by(SensorDataModel.sampleId.asc())
 
 
 def retrieve_first(sid):
@@ -172,9 +174,7 @@ def get_path():
 
 
 def serialise(results):
-    rows = [i.serialize for i in results
-        .order_by(SensorDataModel.sampleId.asc())
-        .all()]
+    rows = [i.serialize for i in results]
     return rows
 
 
