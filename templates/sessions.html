@@ -83,6 +83,11 @@
                         '<td><button onclick="count(\'' + sid + '\')">Count</button></td>' +
                         '<td><button>Delete</button></td>' +
                         '</tr>');
+                    let button = $("<button>Hi there</button>");
+                    button.click(function() {
+                        alert("Hi back!");
+                    });
+                    button.appendTo('#' + sid);
                 }
             },
             error: function(err) {
