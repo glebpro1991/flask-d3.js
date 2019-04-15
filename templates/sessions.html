@@ -80,14 +80,19 @@
                         '<td>' + session.deviceId +'</td>' +
                         '<td>' + session.startTime +'</td>' +
                         '<td>' + session.stopTime +'</td>' +
-                        '<td><button onclick="count(\'' + sid + '\')">Count</button></td>' +
-                        '<td><button>Delete</button></td>' +
+                        '<td id=count' + sid + '></td>' +
+                        '<td></td>' +
                         '</tr>');
-                    let button = $("<button>Hi there</button>");
-                    button.click(function() {
+                    let countButton = $("<button>Count</button>");
+                    countButton.click(function() {
                         alert("Hi back!");
                     });
-                    button.appendTo('#' + sid);
+                    countButton.appendTo('#count' + sid);
+                    let deleteButton = $("<button>Delete</button>");
+                    deleteButton.click(function() {
+                        alert("Hi back!");
+                    });
+                    deleteButton.appendTo('#delete' + sid);
                 }
             },
             error: function(err) {
