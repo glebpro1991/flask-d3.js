@@ -179,7 +179,10 @@ def serialise(results):
 
 def validate_dataset(counter, sid):
     errors = []
-    for sample in get_samples_by_session_id(sid).all():
+    for sample in db.session.query(SensorDataModel.sampleId) \
+            .filter(SensorDataModel.sessionId == sid) \
+            .order_by(SensorDataModel.sampleId.asc()) \
+            .all():
         sample_id = int(sample[0])
 
         if counter != sample_id:
