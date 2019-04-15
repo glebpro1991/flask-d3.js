@@ -51,8 +51,6 @@
                         <th scope="col">Device ID</th>
                         <th scope="col">Start Time</th>
                         <th scope="col">End Time</th>
-                        <!--<th scope="col">Count</th>-->
-                        <!--<th scope="col">Delete</th>-->
                     </tr>
                     </thead>
                     <tbody id="sessions">
@@ -72,53 +70,7 @@
             dataType: 'json',
             success: function(res) {
                 for(let i = 0; i < res.length; i++) {
-                    let session = res[i];
-                    let sid = session.sessionId;
-                    printMessage();
-
-                    $("#sessions").append('<tr id=' + sid +'>' +
-                        '<th>' + sid + '</th>' +
-                        '<td>' + session.userId +'</td>' +
-                        '<td>' + session.deviceId +'</td>' +
-                        '<td>' + session.startTime +'</td>' +
-                        '<td>' + session.stopTime +'</td>' +
-                        '<td id=count' + sid + '></td>' +
-                        '<td id=delete' + sid + '></td>' +
-                        '<td id=validate' + sid + '></td>' +
-                        '</tr>');
-
-                    let countButton = $("<button>Count</button>"),
-                    countButtonSel = '#count' + sid;
-                    countButton.click(function() {
-                        $.ajax({
-                            url: "/api/count/" + sid,
-                            type: 'GET',
-                            success: function(res) {
-                                $(countButtonSel).text(res);
-                            }
-                        });
-                    });
-                    countButton.appendTo(countButtonSel);
-
-                    let deleteButton = $("<button>Delete</button>"),
-                    deleteButtonSel = '#delete' + sid;
-                    deleteButton.click(function() {
-                        $.ajax({
-                            url: "/api/delete/" + sid,
-                            type: 'GET',
-                            success: function(res) {
-                                $(deleteButtonSel).text(res);
-                            }
-                        });
-                    });
-                    deleteButton.appendTo(deleteButtonSel);
-
-                    let validateButton = $("<button>Validate</button>"),
-                        validateButtonSel = '#validate' + sid;
-                    validateButton.click(function() {
-                        window.location.href = "/api/validate/" + sid;
-                    });
-                    validateButton.appendTo(validateButtonSel);
+                    createRow(res[i]);
                 }
             },
             error: function(err) {
@@ -126,8 +78,54 @@
             }
         });
 
-        function printMessage() {
-            console.log("Message!");
+        function createRow(session) {
+            let sid = session.sessionId;
+            $("#sessions").append('<tr id=' + sid +'>' +
+                '<th>' + sid + '</th>' +
+                '<td>' + session.userId +'</td>' +
+                '<td>' + session.deviceId +'</td>' +
+                '<td>' + session.startTime +'</td>' +
+                '<td>' + session.stopTime +'</td>' +
+                '<td id=count' + sid + '></td>' +
+                '<td id=delete' + sid + '></td>' +
+                '<td id=validate' + sid + '></td>' +
+                '</tr>');
+            createButtons(sid);
+        }
+
+        function createButtons(sid) {
+            let countButton = $("<button>Count</button>"),
+                countButtonSel = '#count' + sid;
+            countButton.click(function() {
+                $.ajax({
+                    url: "/api/count/" + sid,
+                    type: 'GET',
+                    success: function(res) {
+                        $(countButtonSel).text(res);
+                    }
+                });
+            });
+            countButton.appendTo(countButtonSel);
+
+            let deleteButton = $("<button>Delete</button>"),
+                deleteButtonSel = '#delete' + sid;
+            deleteButton.click(function() {
+                $.ajax({
+                    url: "/api/delete/" + sid,
+                    type: 'GET',
+                    success: function(res) {
+                        $(deleteButtonSel).text(res);
+                    }
+                });
+            });
+            deleteButton.appendTo(deleteButtonSel);
+
+            let validateButton = $("<button>Validate</button>"),
+                validateButtonSel = '#validate' + sid;
+            validateButton.click(function() {
+                window.location.href = "/api/validate/" + sid;
+            });
+            validateButton.appendTo(validateButtonSel);
         }
     });
 </script>
