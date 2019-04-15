@@ -80,7 +80,7 @@
                         '<td>' + session.deviceId +'</td>' +
                         '<td>' + session.startTime +'</td>' +
                         '<td>' + session.stopTime +'</td>' +
-                        '<td><button>Count</button onclick="count('+ session.sessionId +')"></td>' +
+                        '<td><button>Count</button onclick="count(\'' + session.sessionId + '\')"></td>' +
                         '<td><button>Delete</button></td>' +
                         '</tr>');
                 }
@@ -97,4 +97,5 @@
         }
     });
 </script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
 </html>

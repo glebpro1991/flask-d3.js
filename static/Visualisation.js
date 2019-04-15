@@ -3,9 +3,7 @@ function Visualisation() {
     let accTimeQ = [], gyroTimeQ = [], magTimeQ = [],
         gAccTime, gGyroTime, gMagTime,
         gAccFreq, gGyroFreq, gMagFreq,
-        qSize = 5000;
-
-    let ampls = {};
+        qSize = 5000, ampls = {};
 
     this.init = function() {
         setAmplitudes();
@@ -52,11 +50,10 @@ function Visualisation() {
             let p = data[i];
 
             // Ignore Historic Data
-            // if(Date.now() - Date.parse(p.time) > 300000) {
-            //     document.getElementById("syncId").innerText = p.sampleId;
-            //     document.getElementById("syncTime").innerText = p.time;
-            //     return;
-            // }
+            if(Date.now() - Date.parse(p.time) > 300000) {
+                document.getElementById("syncTime").innerText = p.time;
+                return;
+            }
 
             let accPoint = getTimeDataPoint(p.time, p.accX, p.accY, p.accZ);
             if(accTimeQ.push(accPoint) === qSize)
@@ -158,34 +155,17 @@ function Visualisation() {
     }
 
     function redrawTimeAxes(startTime, endTime) {
-        // Uncomment these lines to scale axes dynamically
-        // let accData = combineXYZ(accTimeQ);
-        // let gyroData = combineXYZ(gyroTimeQ);
-        // let magData = combineXYZ(magTimeQ);
-
         gAccTime.redrawAxes(startTime, endTime,
             selectors.gAccTime.scale,
             -selectors.gAccTime.scale);
-            // getMax(accData), // Uncomment these lines to scale axes dynamically
-            // getMin(accData));
         gGyroTime.redrawAxes(startTime, endTime,
             selectors.gGyroTime.scale,
             -selectors.gGyroTime.scale);
-            // getMax(gyroData), // Uncomment these lines to scale axes dynamically
-            // getMin(gyroData));
         gMagTime.redrawAxes(startTime, endTime,
             selectors.gMagTime.scale,
             -selectors.gMagTime.scale);
-            // getMax(magData), // Uncomment these lines to scale axes dynamically
-            // getMin(magData));
     }
 
-    // Extracts x, y, z values into a single array from an array of objects
-    function combineXYZ(arr) {
-        return arr.map(a => a.x)
-            .concat(arr.map(a => a.y))
-            .concat(arr.map(a => a.z));
-    }
 
     // Extracts value property from multiple arrays in the object
     function combineXYZFromMultipleArrays(arr) {
@@ -211,11 +191,6 @@ function Visualisation() {
     function getMax(arr) {
         return Math.max.apply(null, arr);
     }
-
-    // Uncomment these lines to scale axes dynamically
-    // function getMin(arr) {
-    //     return Math.min.apply(null, arr);
-    // }
 
     this.processNewData = function(data) {
         populateTimeSeries(data);
