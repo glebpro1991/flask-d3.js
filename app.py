@@ -49,13 +49,13 @@ def show_about_page():
 
 
 @app.route('/api/getLast', methods=['GET'])
-def get_data_last():
+def get_last():
     results = retrieve_last()
     return jsonify([i.serialize for i in results.all()])
 
 
 @app.route('/api/get/<int:sid>', methods=['GET'])
-def get_data_by_session_id(sid):
+def get_by_session_id(sid):
     results = retrieve_by_session_id(sid)
     if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large!"}])
@@ -67,7 +67,7 @@ def get_data_by_session_id(sid):
 
 
 @app.route('/api/get/<int:start>/<int:end>/<int:sid>', methods=['GET'])
-def get_data_by_time(start, end, sid):
+def get_by_time(start, end, sid):
     if validate_params(start, end):
         return jsonify(results=[{"error": "Invalid timestamps"}])
     elif validate_time_period(start, end):
@@ -108,11 +108,9 @@ def delete_all():
 
 
 @app.route('/api/validate/<int:sid>', methods=['GET'])
-def validate_by_session_id(sid):
+def validate(sid):
     tstart = time.time()
-
     first = retrieve_first(sid)
-
     if first is None:
         return 'No records in the table'
     else:
@@ -138,7 +136,8 @@ def converter(o):
 
 def retrieve_by_session_id(sid):
     return db.session.query(SensorDataModel) \
-        .filter(SensorDataModel.sessionId == sid)
+        .filter(SensorDataModel.sessionId == sid) \
+        .order_by(SensorDataModel.sampleId.asc())
 
 
 def retrieve_by_time(tstart, tend, sid):
@@ -153,6 +152,7 @@ def retrieve_first(sid):
         .filter(SensorDataModel.sessionId == sid) \
         .order_by(SensorDataModel.sampleId.asc()) \
         .first()
+
 
 def retrieve_last():
     return db.session.query(SensorDataModel) \
@@ -183,19 +183,13 @@ def validate_dataset_size(count):
 
 
 def serialise(results):
-    rows = [i.serialize for i in results
-        .order_by(SensorDataModel.sampleId.asc())
-        .all()]
+    rows = [i.serialize for i in results.all()]
     return rows
 
 
 def validate_dataset(counter, sid):
     errors = []
-
-    for sample in db.session.query(SensorDataModel.sampleId) \
-            .filter(SensorDataModel.sessionId == sid) \
-            .order_by(SensorDataModel.sampleId.asc()) \
-            .all():
+    for sample in retrieve_by_session_id(sid).all():
         sample_id = int(sample[0])
 
         if counter != sample_id:
@@ -206,7 +200,6 @@ def validate_dataset(counter, sid):
                           + '. ' + str(difference)
                           + ' rows are missing!')
         counter = counter + 1
-
     return errors
 
 
