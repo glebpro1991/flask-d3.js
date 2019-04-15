@@ -83,8 +83,8 @@
                         '<td id=count' + sid + '></td>' +
                         '<td id=delete' + sid + '></td>' +
                         '</tr>');
-                    let countButton = $("<button>Count</button>");
-                    let countButtonSel = '#count' + sid;
+                    let countButton = $("<button>Count</button>"),
+                    countButtonSel = '#count' + sid;
                     countButton.click(function() {
                         $.ajax({
                             url: "/api/count/" + sid,
@@ -95,11 +95,18 @@
                         });
                     });
                     countButton.appendTo(countButtonSel);
-                    let deleteButton = $("<button>Delete</button>");
+                    let deleteButton = $("<button>Delete</button>"),
+                    deleteButtonSel = '#delete' + sid;
                     deleteButton.click(function() {
-                        alert("Hi back!");
+                        $.ajax({
+                            url: "/api/delete/" + sid,
+                            type: 'GET',
+                            success: function(res) {
+                                $(deleteButtonSel).text(res);
+                            }
+                        });
                     });
-                    deleteButton.appendTo('#delete' + sid);
+                    deleteButton.appendTo(deleteButtonSel);
                 }
             },
             error: function(err) {
