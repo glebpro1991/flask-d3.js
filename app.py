@@ -179,16 +179,16 @@ def serialise(results):
 
 def validate_dataset(counter, sid):
     errors = []
-    for sample in get_samples_by_session_id(sid):
+    for sample in db.session.query(SensorDataModel.sampleId) \
+            .filter(SensorDataModel.sessionId == sid) \
+            .order_by(SensorDataModel.sampleId.asc()) \
+            .all():
         sample_id = int(sample[0])
 
         if counter != sample_id:
             difference = (sample_id - counter)
             counter = counter + difference
-            errors.append('Sequence broken on sample ID '
-                          + str(sample_id)
-                          + '. ' + str(difference)
-                          + ' rows are missing!')
+            errors.append('Sequence broken on sample %s %s rows are missing!' % (str(sample_id), str(difference)))
         counter = counter + 1
     return errors
 
