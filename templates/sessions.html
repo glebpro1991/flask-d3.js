@@ -7,8 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-    <div id="nav-placeholder">
-
+    <div id="nav-menu">
     </div>
     <div class="container">
         <div class="row">
@@ -38,7 +37,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $.get("/nav", function(data){
-            $("#nav-placeholder").replaceWith(data);
+            $("#nav-menu").replaceWith(data);
         });
 
         $.ajax({

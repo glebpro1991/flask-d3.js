@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="en">
 <head>
     <title>Download</title>
     <meta charset="utf-8">
@@ -11,36 +12,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.7.14/css/bootstrap-datetimepicker.min.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">Server Console</a>
-        <button class="navbar-toggler" type="button"
-                data-toggle="collapse"
-                data-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent"
-                aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="../static/index.html">Visualisation</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/sessions">Sessions</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/download">Download</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/api">API</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/about">About</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
+    <div id="nav-menu">
+    </div>
     <div class="container">
         <div class="row">
             <h2>Download Data</h2>
@@ -84,6 +57,10 @@
             </div>
             <script type="text/javascript">
                 $(document).ready(function() {
+                    $.get("/nav", function(data){
+                        $("#nav-menu").replaceWith(data);
+                    });
+
                     $("#dataform").submit(function(e) {
                         e.preventDefault();
                         let url = "http://130.159.94.17/api/get/";
@@ -150,4 +127,4 @@
         </div>
     </div>
 </body>
-</head>
+</html>
