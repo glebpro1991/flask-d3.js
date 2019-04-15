@@ -81,15 +81,14 @@
                         '<td>' + session.deviceId +'</td>' +
                         '<td>' + session.startTime +'</td>' +
                         '<td>' + session.stopTime +'</td>' +
-                        '<td><button>Count</button></td>' +
-                        '<td><button>Delete</button></td>' +
+                        '<td></td>' +
+                        '<td id="currentElement"></td>' +
                         '</tr>');
-                    let countButton = document.createElement('input');
-                    countButton.type = "button";
-                    countButton.addEventListener('click', function(){
-                        count(session.sessionId);
+                    let button = $("<button>Hi there</button>");
+                    button.click(function() {
+                        alert("Hi back!");
                     });
-                    $("tr[id=" + sid + "]").appendChild(countButton);
+                    button.appendTo("#currentElement");
                 }
             },
             error: function(err) {
