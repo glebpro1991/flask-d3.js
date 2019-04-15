@@ -7,8 +7,7 @@ const props = {
             left: 50
         },
         width: 600,
-        frequencyWidth: 600,
-        height: 180,
+        height: 160,
         offset: 5
     },
     sensorAxes: [{

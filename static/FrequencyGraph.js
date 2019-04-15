@@ -15,7 +15,7 @@ function FrequencyGraph() {
 
     function initGraph() {
         graph = d3.select(sel.graph)
-            .attr('width', props.dimensions.frequencyWidth
+            .attr('width', props.dimensions.width
                 + props.dimensions.margins.left
                 + props.dimensions.margins.right)
             .attr('height', props.dimensions.height
@@ -27,7 +27,7 @@ function FrequencyGraph() {
     function initAxes() {
         xScale = d3.scaleBand()
             .range([props.dimensions.margins.left,
-                props.dimensions.frequencyWidth - props.dimensions.margins.right]);
+                props.dimensions.width - props.dimensions.margins.right]);
         yScale = d3.scaleLinear()
             .range([props.dimensions.height - props.dimensions.margins.top,
                 props.dimensions.margins.bottom]);
@@ -53,7 +53,7 @@ function FrequencyGraph() {
             .style("font-size", ".70em")
             .attr("class", "x label")
             .attr("text-anchor", "end")
-            .attr("x", props.dimensions.frequencyWidth/2 + 50)
+            .attr("x", props.dimensions.width/2 + 50)
             .attr("y", props.dimensions.height + 20)
             .text(sel.labels.xAxis);
 
@@ -73,7 +73,7 @@ function FrequencyGraph() {
             .enter().append("svg:g")
             .attr("class", "lineLegend")
             .attr("transform", function (d, i) {
-                return "translate(" + (props.dimensions.frequencyWidth - 60) + "," + (i * 20) + ")";
+                return "translate(" + (props.dimensions.width - 60) + "," + (i * 20) + ")";
             });
 
         lineLegend.append("text").text(function (d) {return d.name;})

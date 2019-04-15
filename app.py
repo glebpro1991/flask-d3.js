@@ -3,7 +3,7 @@ import json
 import os
 import time
 
-from flask import Flask, jsonify, make_response, render_template, send_from_directory
+from flask import Flask, jsonify, make_response, render_template
 
 from models import db, SensorDataModel, SessionModel
 
@@ -50,10 +50,8 @@ def show_about_page():
 
 @app.route('/api/getLast', methods=['GET'])
 def get_data_last():
-    results = db.session.query(SensorDataModel)
-    return jsonify([i.serialize for i in results
-                   .order_by(SensorDataModel.sampleId.desc())
-                   .limit(100).all()])
+    results = retrieve_last()
+    return jsonify([i.serialize for i in results.all()])
 
 
 @app.route('/api/get/<int:sid>', methods=['GET'])
@@ -113,15 +111,13 @@ def delete_all():
 def validate_by_session_id(sid):
     tstart = time.time()
 
-    first = db.session.query(SensorDataModel.sampleId) \
-        .filter(SensorDataModel.sessionId == sid) \
-        .order_by(SensorDataModel.sampleId.asc()) \
-        .first()
+    first = retrieve_first(sid)
 
     if first is None:
         return 'No records in the table'
     else:
         response = [
+            {'session': sid},
             {'time taken': str(time.time() - tstart)},
             {'errors': validate_dataset(first[0], sid)}]
         return jsonify(results=response)
@@ -150,6 +146,18 @@ def retrieve_by_time(tstart, tend, sid):
         .filter(SensorDataModel.sessionId == sid) \
         .filter(SensorDataModel.time >= tstart) \
         .filter(SensorDataModel.time <= tend)
+
+
+def retrieve_first(sid):
+    return db.session.query(SensorDataModel.sampleId) \
+        .filter(SensorDataModel.sessionId == sid) \
+        .order_by(SensorDataModel.sampleId.asc()) \
+        .first()
+
+def retrieve_last():
+    return db.session.query(SensorDataModel) \
+        .order_by(SensorDataModel.sampleId.desc()) \
+        .limit(100)
 
 
 def convert_to_datetime(timestamp):
