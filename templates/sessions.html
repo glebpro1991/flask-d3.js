@@ -37,8 +37,8 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        $(function(){
-            $("#nav-placeholder").load("nav.html");
+        $.get("nav.html", function(data){
+            $("#nav-placeholder").replaceWith(data);
         });
 
         $.ajax({
