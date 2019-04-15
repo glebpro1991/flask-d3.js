@@ -38,8 +38,8 @@
                             <th>/api/get/int:start/int:end/int:sid</th>
                             <td>
                                 <ul>
-                                    <li>start - start time of data subset as UNIX timestamp in milliseconds</li>
-                                    <li>end - end time of data subset as UNIX timestamp in in milliseconds</li>
+                                    <li>start - subset start time as UNIX timestamp in seconds</li>
+                                    <li>end - subset end time as UNIX timestamp in in seconds</li>
                                     <li>sid - user session ID</li>
                                 </ul>
                             </td>
@@ -67,7 +67,7 @@
                                     <li>sid - user session ID</li>
                                 </ul>
                             </td>
-                            <td>Deletes the sensor samples that belong to user session</td>
+                            <td>Deletes the sensor samples that belong to user session along with the session record</td>
                         </tr>
                         <tr>
                             <th>/api/deleteAll</th>
@@ -92,6 +92,11 @@
                             <th>/api/getLast</th>
                             <td>None</td>
                             <td>Returns the contents of the most recent sensor batch</td>
+                        </tr>
+                        <tr>
+                            <th>/api/getSessions</th>
+                            <td>None</td>
+                            <td>Returns a list of last 100 sessions</td>
                         </tr>
                     </tbody>
                 </table>
