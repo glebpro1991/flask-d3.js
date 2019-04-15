@@ -71,7 +71,6 @@
             type: 'GET',
             dataType: 'json',
             success: function(res) {
-                console.log(res);
                 for(let i = 0; i < res.length; i++) {
                     let session = res[i];
                     $("#sessions").append('<tr id=' + session.sessionId +'>' +
@@ -80,7 +79,7 @@
                         '<td>' + session.deviceId +'</td>' +
                         '<td>' + session.startTime +'</td>' +
                         '<td>' + session.stopTime +'</td>' +
-                        '<td><button>Count</button onclick="count('+ session.sessionId +')"></td>' +
+                        '<td><button>Count</button onclick="count(\'' + session.sessionId + '\')"></td>' +
                         '<td><button>Delete</button></td>' +
                         '</tr>');
                 }
