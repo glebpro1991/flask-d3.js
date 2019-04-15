@@ -105,7 +105,7 @@ def delete_by_session_id(sid):
         .filter(SensorDataModel.sessionId == sid) \
         .delete()
     db.session.query(SessionModel)\
-        .filter(SensorDataModel.sessionId == sid) \
+        .filter(SessionModel.sessionId == sid) \
         .delete()
     db.session.commit()
     return 'Deleted: ' + str(num_rows)
