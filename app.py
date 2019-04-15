@@ -62,9 +62,7 @@ def get_by_session_id(sid):
     if results.count() > 1000000:
         return jsonify(results=[{"error": "Result set is too large!"}])
     else:
-        with open(get_path(), 'w') as fp:
-            j = json.dumps(serialise(results), default=converter, indent=4)
-            fp.write(j)
+        write_to_file(results)
         return create_response()
 
 
@@ -76,9 +74,7 @@ def get_by_time(start, end, sid):
         return jsonify(results=[{"error": "Time period is too large"}])
     else:
         results = get_samples_by_time(convert_to_datetime(start), convert_to_datetime(end), sid)
-        with open(get_path(), 'w') as fp:
-            j = json.dumps(serialise(results), default=converter, indent=4)
-            fp.write(j)
+        write_to_file(results)
         return create_response()
 
 
@@ -122,7 +118,7 @@ def count_all():
 def delete_all():
     num_rows = db.session.query(SensorDataModel).delete()
     db.session.commit()
-    return 'Deleted ' + str(num_rows)
+    return 'Deleted: ' + str(num_rows)
 
 
 @app.route('/api/getSessions')
@@ -171,6 +167,12 @@ def convert_to_datetime(timestamp):
 
 def get_path():
     return os.path.join(FILE_DIR, 'result.json')
+
+
+def write_to_file(results):
+    with open(get_path(), 'w') as fp:
+        j = json.dumps(serialise(results), default=converter, indent=4)
+    fp.write(j)
 
 
 def serialise(results):
