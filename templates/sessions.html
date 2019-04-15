@@ -73,8 +73,10 @@
             success: function(res) {
                 for(let i = 0; i < res.length; i++) {
                     let session = res[i];
-                    $("#sessions").append('<tr id=' + session.sessionId +'>' +
-                        '<th>' + session.sessionId + '</th>' +
+                    let sid = session.sessionId;
+
+                    $("#sessions").append('<tr id=' + sid +'>' +
+                        '<th>' + sid + '</th>' +
                         '<td>' + session.userId +'</td>' +
                         '<td>' + session.deviceId +'</td>' +
                         '<td>' + session.startTime +'</td>' +
@@ -87,7 +89,7 @@
                     countButton.addEventListener('click', function(){
                         count(session.sessionId);
                     });
-                    $(session.sessionId).appendChild(countButton);
+                    $("tr[id=" + sid + "").appendChild(countButton);
                 }
             },
             error: function(err) {
