@@ -84,7 +84,7 @@
                         '<td id=delete' + sid + '></td>' +
                         '</tr>');
                     let countButton = $("<button>Count</button>");
-                    countButton.click(function(sid) {
+                    countButton.click(function() {
                         $.ajax({
                             url: "/api/count/" + sid,
                             type: 'GET',
